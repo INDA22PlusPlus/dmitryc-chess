@@ -23,20 +23,31 @@ enum Color{
 mod tests {
     use super::*;
 
-    #[test]
-    fn create_engine() {
-        let chess_engine = ChessEngine{ board: vec![] };
-
+    struct TestContents {
+        chess_engine: ChessEngine,
     }
+
+    fn setup() -> TestContents {
+        TestContents {
+            chess_engine: ChessEngine { board: vec![] }
+        }
+    }
+
+    fn setup_chess_engine() -> ChessEngine {
+        ChessEngine {
+            board: vec![]
+        }
+    }
+
+    // #[test]
+    // fn create_engine() {
+    //     let chess_engine = ChessEngine{ board: vec![] };
+    //
+    // }
 
     #[test]
     fn print_board_using_loops() {
-        // for y in chess_engine.board{
-        //     for x in chess_engine.board{
-        //
-        //     }
-        // }
-        let chess_engine = ChessEngine{ board: vec![] };
+        let chess_engine = setup_chess_engine();
 
         // println!("test out");
 
