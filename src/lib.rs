@@ -2,6 +2,12 @@ struct ChessEngine{
     pub board: Vec<Vec<Piece>>
 }
 
+// impl ChessEngine {
+//     fn create_empty(self){
+//
+//     }
+// }
+
 struct Piece{
     color: Color,
 }
@@ -17,6 +23,6 @@ mod tests {
 
     #[test]
     fn create_engine() {
-        let chess_engine = ChessEngine::new();
+        let chess_engine = ChessEngine{ board: vec![] };
     }
 }
