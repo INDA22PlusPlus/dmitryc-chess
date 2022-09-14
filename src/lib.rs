@@ -1,19 +1,34 @@
-struct ChessEngine{
-    pub board: Vec<Vec<Piece>>
+struct Size {
+    w:u8,
+    h:u8,
 }
 
-// impl ChessEngine {
-//     fn create_empty(self){
-//
-//     }
-// }
+struct ChessEngine{
+    pub board: Vec<Vec<Piece>>,
+    size: Size,
+}
 
-#[derive(Debug)]
+impl ChessEngine {
+    pub fn new() -> ChessEngine{
+        Self::create_engine_with_white_board()
+    }
+
+    fn create_engine_with_white_board() -> ChessEngine {
+        let size_temp = Size {w:8, h:8};
+        ChessEngine {
+            size: Size {w: *&size_temp.w, h:*&size_temp.h},
+            board: vec![vec![Piece{ color: Color::White }; *&size_temp.w as usize];
+                        *&size_temp.h as usize],
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 struct Piece {
     color: Color,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Color{
     White,
     Black
@@ -29,14 +44,12 @@ mod tests {
 
     fn setup() -> TestContents {
         TestContents {
-            chess_engine: ChessEngine { board: vec![] }
+            chess_engine: ChessEngine::new(),
         }
     }
 
     fn setup_chess_engine() -> ChessEngine {
-        ChessEngine {
-            board: vec![]
-        }
+        ChessEngine::new()
     }
 
     // #[test]
