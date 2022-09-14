@@ -6,6 +6,11 @@ struct Piece{
     color: Color,
 }
 
+enum Color{
+    White,
+    Black
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
