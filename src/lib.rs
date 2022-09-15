@@ -2,11 +2,12 @@ use std::collections::HashMap;
 use std::fmt;
 
 #[derive(Clone)]
-struct CustomOption<Piece>(Option<Piece>);
+struct Square<Piece>(Option<Piece>);
 
-impl fmt::Display for CustomOption<Piece> {
+impl fmt::Display for Square<Piece> {
     fn fmt(&self, formatter: &mut fmt::Formatter<>) -> fmt::Result {
         match &self.0 {
+            // Some(ref piece) => write!(formatter, "{}", piece.notation),
             Some(ref piece) => write!(formatter, "{}", piece.emoji),
             None => write!(formatter, "  "),
         }
@@ -44,7 +45,7 @@ enum PieceTypes{
 }
 
 struct ChessEngine{
-    pub board: Vec<Vec<CustomOption<Piece>>>,
+    pub board: Vec<Vec<Square<Piece>>>,
     size: Size,
 }
 
@@ -59,11 +60,11 @@ impl ChessEngine {
         let size_temp = Size {w:8, h:8};
         ChessEngine {
             size: Size {w: *&size_temp.w, h:*&size_temp.h},
-            board: vec![vec![CustomOption(Some(Piece { 
+            board: vec![vec![Square(Some(Piece {
                 color: Color::Black,
-                piece_type: PieceTypes::King,
-                notation: Self::get_notation_string(&PieceTypes::King),      // TODO: References of this style need refactoring
-                emoji: Self::get_emoji_string(&PieceTypes::King, &Color::Black)
+                piece_type: PieceTypes::Pawn,
+                notation: Self::get_notation_string(&PieceTypes::Pawn),      // TODO: References of this style need refactoring
+                emoji: Self::get_emoji_string(&PieceTypes::Pawn, &Color::Black)
             })); *&size_temp.w as usize];
                         *&size_temp.h as usize],
         }
@@ -73,9 +74,80 @@ impl ChessEngine {
         let size_temp = Size {w:8, h:8};
         ChessEngine {
             size: Size {w: *&size_temp.w, h:*&size_temp.h},
-            board: vec![vec![CustomOption(None); *&size_temp.w as usize];
+            board: vec![vec![Square(None); *&size_temp.w as usize];
                         *&size_temp.h as usize],
         }
+    }
+
+    // TODO: Refactor due to the ginormous size of the method
+    fn create_engine_with_standard_board() -> ChessEngine {
+        struct TempValues { color:Color, piece_type:PieceTypes }
+
+        let mut temp_engine = Self::create_engine_with_empty_board();
+
+        // let mut temp_values = TempValues{ color: Color::Black, piece_type: PieceTypes::Rook };
+        // temp_engine.board[0][0] = Square(Some(Piece{
+        //     color: *temp_values.color,
+        //     piece_type: *temp_values.piece_type,
+        //     notation: Self::get_notation_string(*temp_values.piece_type),      // TODO: References of this style need refactoring
+        //     emoji: Self::get_emoji_string(&*temp_values.piece_type, *temp_values.color)
+        // }));
+
+        // Black --------------------------------------------------------------------------
+
+        // Rooks --------------------------------------------------------------------------
+        temp_engine.board[0][0] = Square(Some(Piece{
+            color: Color::Black,
+            piece_type: PieceTypes::Rook,
+            notation: Self::get_notation_string(&PieceTypes::Rook),      // TODO: References of this style need refactoring
+            emoji: Self::get_emoji_string(&PieceTypes::Rook, &Color::Black)
+        }));
+
+        temp_engine.board[0][7] = Square(Some(Piece{
+            color: Color::Black,
+            piece_type: PieceTypes::Rook,
+            notation: Self::get_notation_string(&PieceTypes::Rook),      // TODO: References of this style need refactoring
+            emoji: Self::get_emoji_string(&PieceTypes::Rook, &Color::Black)
+        }));
+
+        // Pawns --------------------------------------------------------------------------
+        for x in 0..=7 {
+            temp_engine.board[1][x] = Square(Some(Piece{
+                color: Color::Black,
+                piece_type: PieceTypes::Pawn,
+                notation: Self::get_notation_string(&PieceTypes::Pawn),      // TODO: References of this style need refactoring
+                emoji: Self::get_emoji_string(&PieceTypes::Pawn, &Color::Black)
+            }));
+        }
+
+        // White --------------------------------------------------------------------------
+
+        // Rooks --------------------------------------------------------------------------
+        temp_engine.board[7][0] = Square(Some(Piece{
+            color: Color::White,
+            piece_type: PieceTypes::Rook,
+            notation: Self::get_notation_string(&PieceTypes::Rook),      // TODO: References of this style need refactoring
+            emoji: Self::get_emoji_string(&PieceTypes::Rook, &Color::White)
+        }));
+
+        temp_engine.board[7][7] = Square(Some(Piece{
+            color: Color::White,
+            piece_type: PieceTypes::Rook,
+            notation: Self::get_notation_string(&PieceTypes::Rook),      // TODO: References of this style need refactoring
+            emoji: Self::get_emoji_string(&PieceTypes::Rook, &Color::White)
+        }));
+
+        // Pawns --------------------------------------------------------------------------
+        for x in 0..=7 {
+            temp_engine.board[6][x] = Square(Some(Piece{
+                color: Color::White,
+                piece_type: PieceTypes::Pawn,
+                notation: Self::get_notation_string(&PieceTypes::Pawn),      // TODO: References of this style need refactoring
+                emoji: Self::get_emoji_string(&PieceTypes::Pawn, &Color::White)
+            }));
+        }
+
+        temp_engine
     }
 
     // TODO: Horrible code, needs refactoring later
@@ -157,6 +229,7 @@ impl ChessEngine {
         map
     }
 
+    // TODO: Should be fixed because of underlying functions duplication
     fn get_emoji_string(piece: &PieceTypes, color: &Color) -> String {
         match color {
             Color::White => {
@@ -217,6 +290,21 @@ mod tests {
     #[test]
     fn print_filled_board_with_ranks() {
         let chess_engine = ChessEngine::create_engine_with_white_board();
+
+        chess_engine.print_board_with_ranks()
+    }
+
+    #[test]
+    fn print_standard_board() {
+        let chess_engine = ChessEngine::create_engine_with_standard_board();
+
+        chess_engine.print_board()
+
+    }
+
+    #[test]
+    fn print_standard_board_with_ranks() {
+        let chess_engine = ChessEngine::create_engine_with_standard_board();
 
         chess_engine.print_board_with_ranks()
     }
