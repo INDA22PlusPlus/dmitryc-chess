@@ -1,10 +1,24 @@
+use std::fmt;
+
+#[derive(Clone)]
+struct CustomOption<Piece>(Option<Piece>);
+
+impl<Piece> fmt::Display for CustomOption<Piece> {
+    fn fmt(&self, formatter: &mut fmt::Formatter<>) -> fmt::Result {
+        match self.0 {
+            Some(ref piece) => write!(formatter, "P "),
+            None => write!(formatter, "  "),
+        }
+    }
+}
+
 struct Size {
     w:u8,
     h:u8,
 }
 
 struct ChessEngine{
-    pub board: Vec<Vec<Option<Piece>>>,
+    pub board: Vec<Vec<CustomOption<Piece>>>,
     size: Size,
 }
 
@@ -18,7 +32,7 @@ impl ChessEngine {
         let size_temp = Size {w:8, h:8};
         ChessEngine {
             size: Size {w: *&size_temp.w, h:*&size_temp.h},
-            board: vec![vec![Option::from(Piece { color: Color::White }); *&size_temp.w as usize];
+            board: vec![vec![CustomOption(Some(Piece { color: Color::White, string_name: "P".to_string() })); *&size_temp.w as usize];
                         *&size_temp.h as usize],
         }
     }
@@ -27,7 +41,7 @@ impl ChessEngine {
         let size_temp = Size {w:8, h:8};
         ChessEngine {
             size: Size {w: *&size_temp.w, h:*&size_temp.h},
-            board: vec![vec![None; *&size_temp.w as usize];
+            board: vec![vec![CustomOption(None); *&size_temp.w as usize];
                         *&size_temp.h as usize],
         }
     }
@@ -36,6 +50,7 @@ impl ChessEngine {
 #[derive(Debug, Clone)]
 struct Piece {
     color: Color,
+    string_name: String,
 }
 
 #[derive(Debug, Clone)]
@@ -76,10 +91,13 @@ mod tests {
 
         chess_engine.board.iter().for_each(|row| {
             // print!("{:#?}", it);
+            println!("{}", "-".repeat(25));
             row.iter().for_each(|square| {
-                print!("{:#?} ", square);
+                print!("|{}", square);
             });
-            println!();
-        })
+            println!("|");
+        });
+        println!("{}", "-".repeat(25));
+
     }
 }
