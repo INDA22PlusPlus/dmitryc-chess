@@ -74,8 +74,12 @@ mod tests {
 
         // println!("test out");
 
-        chess_engine.board.iter().for_each(|it| {
-            print!("{:#?}", it);
+        chess_engine.board.iter().for_each(|row| {
+            // print!("{:#?}", it);
+            row.iter().for_each(|square| {
+                print!("{:#?} ", square);
+            });
+            println!();
         })
     }
 }
