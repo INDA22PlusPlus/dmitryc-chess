@@ -4,20 +4,30 @@ struct Size {
 }
 
 struct ChessEngine{
-    pub board: Vec<Vec<Piece>>,
+    pub board: Vec<Vec<Option<Piece>>>,
     size: Size,
 }
 
 impl ChessEngine {
     pub fn new() -> ChessEngine{
-        Self::create_engine_with_white_board()
+        // Self::create_engine_with_white_board()
+        Self::create_engine_with_empty_board()
     }
 
     fn create_engine_with_white_board() -> ChessEngine {
         let size_temp = Size {w:8, h:8};
         ChessEngine {
             size: Size {w: *&size_temp.w, h:*&size_temp.h},
-            board: vec![vec![Piece{ color: Color::White }; *&size_temp.w as usize];
+            board: vec![vec![Option::from(Piece { color: Color::White }); *&size_temp.w as usize];
+                        *&size_temp.h as usize],
+        }
+    }
+
+    fn create_engine_with_empty_board() -> ChessEngine {
+        let size_temp = Size {w:8, h:8};
+        ChessEngine {
+            size: Size {w: *&size_temp.w, h:*&size_temp.h},
+            board: vec![vec![None; *&size_temp.w as usize];
                         *&size_temp.h as usize],
         }
     }
@@ -65,7 +75,7 @@ mod tests {
         // println!("test out");
 
         chess_engine.board.iter().for_each(|it| {
-            println!("{:#?}", it);
+            print!("{:#?}", it);
         })
     }
 }
