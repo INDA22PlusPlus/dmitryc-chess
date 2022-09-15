@@ -45,6 +45,17 @@ impl ChessEngine {
                         *&size_temp.h as usize],
         }
     }
+
+    pub fn print_board(&self) {
+        self.board.iter().for_each(|row| {
+            println!("{}", "-".repeat(25));
+            row.iter().for_each(|square| {
+                print!("|{}", square);
+            });
+            println!("|");
+        });
+        println!("{}", "-".repeat(25));
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -84,20 +95,17 @@ mod tests {
     // }
 
     #[test]
-    fn print_board_using_loops() {
+    fn print_empty_board() {
         let chess_engine = setup_chess_engine();
 
-        // println!("test out");
+        chess_engine.print_board()
 
-        chess_engine.board.iter().for_each(|row| {
-            // print!("{:#?}", it);
-            println!("{}", "-".repeat(25));
-            row.iter().for_each(|square| {
-                print!("|{}", square);
-            });
-            println!("|");
-        });
-        println!("{}", "-".repeat(25));
+    }
 
+    #[test]
+    fn print_filled_board() {
+        let chess_engine = ChessEngine::create_engine_with_white_board();
+
+        chess_engine.print_board()
     }
 }
