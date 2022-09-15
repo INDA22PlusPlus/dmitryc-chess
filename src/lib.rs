@@ -46,6 +46,7 @@ impl ChessEngine {
         }
     }
 
+    // Horrible code, needs refactoring later
     pub fn print_board(&self) {
         self.board.iter().for_each(|row| {
             println!("{}", "-".repeat(25));
@@ -57,6 +58,7 @@ impl ChessEngine {
         println!("{}", "-".repeat(25));
     }
 
+    // Horrible code, needs refactoring later
     pub fn print_board_with_ranks(&self) {
         print!("  ");
         for letter in b'A'..=b'H'{
