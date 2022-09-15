@@ -183,6 +183,52 @@ impl ChessEngine {
             emoji: Self::get_emoji_string(&PieceTypes::Rook, &Color::White)
         }));
 
+        // Knights --------------------------------------------------------------------------
+        temp_engine.board[7][1] = Square(Some(Piece{
+            color: Color::White,
+            piece_type: PieceTypes::Knight,
+            notation: Self::get_notation_string(&PieceTypes::Knight),      // TODO: References of this style need refactoring
+            emoji: Self::get_emoji_string(&PieceTypes::Knight, &Color::White)
+        }));
+
+        temp_engine.board[7][6] = Square(Some(Piece{
+            color: Color::White,
+            piece_type: PieceTypes::Knight,
+            notation: Self::get_notation_string(&PieceTypes::Knight),      // TODO: References of this style need refactoring
+            emoji: Self::get_emoji_string(&PieceTypes::Knight, &Color::White)
+        }));
+
+        // Bishops --------------------------------------------------------------------------
+        temp_engine.board[7][2] = Square(Some(Piece{
+            color: Color::White,
+            piece_type: PieceTypes::Bishop,
+            notation: Self::get_notation_string(&PieceTypes::Bishop),      // TODO: References of this style need refactoring
+            emoji: Self::get_emoji_string(&PieceTypes::Bishop, &Color::White)
+        }));
+
+        temp_engine.board[7][5] = Square(Some(Piece{
+            color: Color::White,
+            piece_type: PieceTypes::Bishop,
+            notation: Self::get_notation_string(&PieceTypes::Bishop),      // TODO: References of this style need refactoring
+            emoji: Self::get_emoji_string(&PieceTypes::Bishop, &Color::White)
+        }));
+
+        // Queen --------------------------------------------------------------------------
+        temp_engine.board[7][3] = Square(Some(Piece{
+            color: Color::White,
+            piece_type: PieceTypes::Queen,
+            notation: Self::get_notation_string(&PieceTypes::Queen),      // TODO: References of this style need refactoring
+            emoji: Self::get_emoji_string(&PieceTypes::Queen, &Color::White)
+        }));
+
+        // King --------------------------------------------------------------------------
+        temp_engine.board[7][4] = Square(Some(Piece{
+            color: Color::White,
+            piece_type: PieceTypes::King,
+            notation: Self::get_notation_string(&PieceTypes::King),      // TODO: References of this style need refactoring
+            emoji: Self::get_emoji_string(&PieceTypes::King, &Color::White)
+        }));
+
         // Pawns --------------------------------------------------------------------------
         for x in 0..=7 {
             temp_engine.board[6][x] = Square(Some(Piece{
