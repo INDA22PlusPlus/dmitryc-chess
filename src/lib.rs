@@ -56,6 +56,27 @@ impl ChessEngine {
         });
         println!("{}", "-".repeat(25));
     }
+
+    pub fn print_board_with_ranks(&self) {
+        print!("  ");
+        for letter in b'A'..=b'H'{
+            print!(" {} ", letter as char);
+        }
+        println!();
+
+        let mut numbered_rank = 8;
+        self.board.iter().for_each(|row| {
+            println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
+            print!("{} ", &numbered_rank);
+            row.iter().for_each(|square| {
+                print!("|{square}");
+            });
+            println!("|");
+
+            numbered_rank -= 1;
+        });
+        println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -96,7 +117,7 @@ mod tests {
 
     #[test]
     fn print_empty_board() {
-        let chess_engine = setup_chess_engine();
+        let chess_engine = ChessEngine::create_engine_with_empty_board();
 
         chess_engine.print_board()
 
@@ -107,5 +128,20 @@ mod tests {
         let chess_engine = ChessEngine::create_engine_with_white_board();
 
         chess_engine.print_board()
+    }
+
+    #[test]
+    fn print_empty_board_with_ranks() {
+        let chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        chess_engine.print_board_with_ranks()
+
+    }
+
+    #[test]
+    fn print_filled_board_with_ranks() {
+        let chess_engine = ChessEngine::create_engine_with_white_board();
+
+        chess_engine.print_board_with_ranks()
     }
 }
