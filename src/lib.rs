@@ -17,6 +17,18 @@ struct Size {
     h:u8,
 }
 
+#[derive(Debug, Clone)]
+struct Piece {
+    color: Color,
+    string_name: String,
+}
+
+#[derive(Debug, Clone)]
+enum Color{
+    White,
+    Black
+}
+
 struct ChessEngine{
     pub board: Vec<Vec<CustomOption<Piece>>>,
     size: Size,
@@ -81,18 +93,6 @@ impl ChessEngine {
     }
 }
 
-#[derive(Debug, Clone)]
-struct Piece {
-    color: Color,
-    string_name: String,
-}
-
-#[derive(Debug, Clone)]
-enum Color{
-    White,
-    Black
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -110,12 +110,6 @@ mod tests {
     fn setup_chess_engine() -> ChessEngine {
         ChessEngine::new()
     }
-
-    // #[test]
-    // fn create_engine() {
-    //     let chess_engine = ChessEngine{ board: vec![] };
-    //
-    // }
 
     #[test]
     fn print_empty_board() {
