@@ -7,7 +7,7 @@ struct CustomOption<Piece>(Option<Piece>);
 impl fmt::Display for CustomOption<Piece> {
     fn fmt(&self, formatter: &mut fmt::Formatter<>) -> fmt::Result {
         match &self.0 {
-            Some(ref piece) => write!(formatter, "{}", piece.string_name),
+            Some(ref piece) => write!(formatter, "{}", piece.emoji),
             None => write!(formatter, "  "),
         }
     }
@@ -23,7 +23,8 @@ struct Size {
 struct Piece {
     color: Color,
     piece_type: PieceTypes,
-    string_name: String,
+    notation: String,
+    emoji: String,
 }
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
@@ -53,15 +54,16 @@ impl ChessEngine {
         Self::create_engine_with_empty_board()
     }
 
-    // Non-readable code, needs refactoring later
+    // TODO: Non-readable code, needs refactoring later
     fn create_engine_with_white_board() -> ChessEngine {
         let size_temp = Size {w:8, h:8};
         ChessEngine {
             size: Size {w: *&size_temp.w, h:*&size_temp.h},
             board: vec![vec![CustomOption(Some(Piece { 
-                color: Color::White,
+                color: Color::Black,
                 piece_type: PieceTypes::King,
-                string_name: Self::enum_piece_to_notation(&PieceTypes::King)
+                notation: Self::get_notation_string(&PieceTypes::King),      // TODO: References of this style need refactoring
+                emoji: Self::get_emoji_string(&PieceTypes::King, &Color::Black)
             })); *&size_temp.w as usize];
                         *&size_temp.h as usize],
         }
@@ -76,7 +78,7 @@ impl ChessEngine {
         }
     }
 
-    // Horrible code, needs refactoring later
+    // TODO: Horrible code, needs refactoring later
     pub fn print_board(&self) {
         self.board.iter().for_each(|row| {
             println!("{}", "-".repeat(25));
@@ -88,7 +90,7 @@ impl ChessEngine {
         println!("{}", "-".repeat(25));
     }
 
-    // Horrible code, needs refactoring later
+    // TODO: Horrible code, needs refactoring later
     pub fn print_board_with_ranks(&self) {
         print!("  ");
         for letter in b'A'..=b'H'{
@@ -110,7 +112,8 @@ impl ChessEngine {
         println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
     }
 
-    fn get_piece_to_notation_hash() -> HashMap<PieceTypes, String> {
+    // TODO: Very repetitive code, automate later
+    fn get_piece_to_notation_hashmap() -> HashMap<PieceTypes, String> {
         let mut map: HashMap<PieceTypes, String> = HashMap::new();
         map.insert(PieceTypes::King, "K ".to_string());
         map.insert(PieceTypes::Rook, "R ".to_string());
@@ -122,10 +125,51 @@ impl ChessEngine {
         map
     }
 
-    fn enum_piece_to_notation(piece: &PieceTypes) -> String {
-        (&Self::get_piece_to_notation_hash()
+    fn get_notation_string(piece: &PieceTypes) -> String {
+        (&Self::get_piece_to_notation_hashmap()
             .get(&piece)
             .unwrap()).to_string()
+    }
+
+    // TODO: Very repetitive code, automate later
+    fn get_white_emoji_hashmap() -> HashMap<PieceTypes, String> {
+        let mut map: HashMap<PieceTypes, String> = HashMap::new();
+        map.insert(PieceTypes::King, "♔ ".to_string());
+        map.insert(PieceTypes::Rook, "♖ ".to_string());
+        map.insert(PieceTypes::Bishop, "♗ ".to_string());
+        map.insert(PieceTypes::Queen, "♕ ".to_string());
+        map.insert(PieceTypes::Knight, "♘ ".to_string());
+        map.insert(PieceTypes::Pawn, "♙ ".to_string());
+
+        map
+    }
+
+    // TODO: Very repetitive code, automate later
+    fn get_black_emoji_hashmap() -> HashMap<PieceTypes, String> {
+        let mut map: HashMap<PieceTypes, String> = HashMap::new();
+        map.insert(PieceTypes::King, "♚ ".to_string());
+        map.insert(PieceTypes::Rook, "♜ ".to_string());
+        map.insert(PieceTypes::Bishop, "♝ ".to_string());
+        map.insert(PieceTypes::Queen, "♛ ".to_string());
+        map.insert(PieceTypes::Knight, "♞ ".to_string());
+        map.insert(PieceTypes::Pawn, "♟ ".to_string());
+
+        map
+    }
+
+    fn get_emoji_string(piece: &PieceTypes, color: &Color) -> String {
+        match color {
+            Color::White => {
+                (&Self::get_white_emoji_hashmap()
+                    .get(&piece)
+                    .unwrap()).to_string()
+            }
+            Color::Black => {
+                (&Self::get_black_emoji_hashmap()
+                    .get(&piece)
+                    .unwrap()).to_string()
+            }
+        }
     }
 }
 
