@@ -1,35 +1,8 @@
+mod piece;
+use crate::piece::*;
+
 use std::collections::HashMap;
 use std::fmt;
-
-#[derive(Debug, PartialEq, Eq)]
-struct Size {
-    w:u8,
-    h:u8,
-}
-
-#[derive(Debug, Clone, Hash, PartialEq, Eq)]
-struct Piece {
-    color: Color,
-    piece_type: PieceTypes,
-    notation: String,
-    emoji: String,
-}
-
-#[derive(Debug, Clone, Hash, PartialEq, Eq)]
-enum Color{
-    White,
-    Black
-}
-
-#[derive(Debug, Clone, Hash, PartialEq, Eq)]
-enum PieceTypes{
-    King,
-    Rook,
-    Bishop,
-    Queen,
-    Knight,
-    Pawn,
-}
 
 struct ChessEngine{
     pub board: Vec<Vec<Option<Piece>>>,
@@ -44,7 +17,7 @@ impl ChessEngine {
 
     // TODO: Non-readable code, needs refactoring later
     fn create_engine_with_white_board() -> ChessEngine {
-        let size_temp = Size {w:8, h:8};
+        let size_temp = Size{w:8, h:8};
         ChessEngine {
             size: Size {w: *&size_temp.w, h:*&size_temp.h},
             board: vec![vec![Some(Piece {
