@@ -16,7 +16,7 @@ impl ChessEngine {
 
     // TODO: Non-readable code, needs refactoring later
     fn create_engine_with_white_board() -> ChessEngine {
-        let temp_size = Size{w:8, h:8};
+        let temp_size = Size::new(8, 8);
         let mut temp_board = vec![vec![None;temp_size.w as usize]; temp_size.h as usize];
         for x in 0..temp_size.w  {
             for y in 0..temp_size.h {
@@ -26,17 +26,17 @@ impl ChessEngine {
             }
         }
         ChessEngine {
-            size: Size {w: *&temp_size.w, h:*&temp_size.h},
+            size: temp_size,
             board: temp_board,
         }
     }
 
     fn create_engine_with_empty_board() -> ChessEngine {
-        let size_temp = Size {w:8, h:8};
+        let temp_size = Size::new(8, 8);
         ChessEngine {
-            size: Size {w: *&size_temp.w, h:*&size_temp.h},
-            board: vec![vec![None; *&size_temp.w as usize];
-                        *&size_temp.h as usize],
+            size: temp_size,
+            board: vec![vec![None; *&temp_size.w as usize];
+                        *&temp_size.h as usize],
         }
     }
 
@@ -136,8 +136,8 @@ impl ChessEngine {
         println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
     }
 
-    pub fn force_move_piece_with_coords(from: Coords, to:Coords) {
-        // TODO: Checking for coords being within range
+    pub fn force_move_piece_with_coords(self, from: Coords, to:Coords) {
+        // if self.board[from.x][from.y].isSome
     }
 
 }

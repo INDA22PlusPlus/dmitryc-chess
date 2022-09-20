@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub struct Size {
     pub w:u8,
     pub h:u8,
@@ -6,11 +6,11 @@ pub struct Size {
 
 impl Size {
     pub fn new(w:u8, h:u8) -> Size {
-        if w > 7 {
-            panic!("Width must be between 0 and 7!")
+        if w == 0 || w > 8 {
+            panic!("Width must be between 1 and 8!")
         }
-        if h > 7 {
-            panic!("Height must be between 0 and 7!")
+        if h == 0 || h > 8 {
+            panic!("Height must be between 1 and 8!")
         }
         Self{w, h}
     }
@@ -39,10 +39,21 @@ mod tests {
     use super::*;
 
     #[test]
+    #[should_panic]
     fn assign_zeros_size() {
         let s = Size::new(0, 0);
-        assert_eq!(s.w, 0);
-        assert_eq!(s.h, 0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn assign_zero_width_size() {
+        let s = Size::new(0, 1);
+    }
+
+    #[test]
+    #[should_panic]
+    fn assign_zero_height_size() {
+        let s = Size::new(1, 0);
     }
 
     #[test]
@@ -61,9 +72,9 @@ mod tests {
 
     #[test]
     fn assign_limit_values_size() {
-        let s = Size::new(7, 7);
-        assert_eq!(s.w, 7);
-        assert_eq!(s.h, 7);
+        let s = Size::new(8, 8);
+        assert_eq!(s.w, 8);
+        assert_eq!(s.h, 8);
     }
 
     //TODO: How to write this type of test
@@ -76,8 +87,8 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn assign_over_7_size() {
-        let s = Size::new(8, 8);
+    fn assign_over_8_size() {
+        let s = Size::new(100, 100);
     }
 
     #[test]
