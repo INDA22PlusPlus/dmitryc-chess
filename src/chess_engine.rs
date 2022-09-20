@@ -3,9 +3,6 @@ use crate::colors::*;
 use crate::piece_types::*;
 use crate::piece::*;
 
-use std::collections::HashMap;
-use std::fmt;
-
 pub struct ChessEngine{
     pub board: Vec<Vec<Option<Piece>>>,
     size: Size,
@@ -14,7 +11,7 @@ pub struct ChessEngine{
 impl ChessEngine {
     pub fn new() -> ChessEngine{
         // Self::create_engine_with_white_board()
-        Self::create_engine_with_empty_board()
+        Self::create_engine_with_standard_board()
     }
 
     // TODO: Non-readable code, needs refactoring later
@@ -45,17 +42,7 @@ impl ChessEngine {
 
     // TODO: Refactor due to the ginormous size of the method
     fn create_engine_with_standard_board() -> ChessEngine {
-        struct TempValues { Colors:Colors, piece_type:PieceTypes }
-
         let mut temp_engine = Self::create_engine_with_empty_board();
-
-        // let mut temp_values = TempValues{ color: Color::Black, piece_type: PieceTypes::Rook };
-        // temp_engine.board[0][0] = Some(Piece{
-        //     color: *temp_values.color,
-        //     piece_type: *temp_values.piece_type,
-        //     notation: Self::get_notation_string(*temp_values.piece_type),      // TODO: References of this style need refactoring
-        //     emoji: Self::get_emoji_string(&*temp_values.piece_type, *temp_values.color)
-        // }));
 
         // Black --------------------------------------------------------------------------
 
@@ -82,7 +69,7 @@ impl ChessEngine {
 
         // Pawns --------------------------------------------------------------------------
         for x in 0..=7 {
-            temp_engine.board[1][x] = Some(Piece::new(PieceTypes::Pawn, Colors::Black, Coords::new((x as u8), 1)));
+            temp_engine.board[1][x] = Some(Piece::new(PieceTypes::Pawn, Colors::Black, Coords::new(x as u8, 1)));
         }
 
         // White --------------------------------------------------------------------------
@@ -109,7 +96,7 @@ impl ChessEngine {
 
         // Pawns --------------------------------------------------------------------------
         for x in 0..=7 {
-            temp_engine.board[6][x] = Some(Piece::new(PieceTypes::Pawn, Colors::White, Coords::new((x as u8), 6)));
+            temp_engine.board[6][x] = Some(Piece::new(PieceTypes::Pawn, Colors::White, Coords::new(x as u8, 6)));
         }
 
         temp_engine
@@ -205,7 +192,7 @@ mod tests {
 
     #[test]
     fn print_standard_board() {
-        let chess_engine = ChessEngine::create_engine_with_standard_board();
+        let chess_engine = ChessEngine::new();
 
         chess_engine.print_board()
 
@@ -213,7 +200,7 @@ mod tests {
 
     #[test]
     fn print_standard_board_with_ranks() {
-        let chess_engine = ChessEngine::create_engine_with_standard_board();
+        let chess_engine = ChessEngine::new();
 
         chess_engine.print_board_with_ranks()
     }
