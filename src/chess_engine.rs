@@ -1,4 +1,4 @@
-use crate::size::*;
+use crate::coords::*;
 use crate::colors::*;
 use crate::piece_types::*;
 use crate::piece::*;
@@ -19,13 +19,18 @@ impl ChessEngine {
 
     // TODO: Non-readable code, needs refactoring later
     fn create_engine_with_white_board() -> ChessEngine {
-        let size_temp = Size{w:8, h:8};
+        let temp_size = Size{w:8, h:8};
+        let mut temp_board = vec![vec![None;temp_size.w as usize]; temp_size.h as usize];
+        for x in 0..temp_size.w  {
+            for y in 0..temp_size.h {
+                temp_board[x as usize][y as usize] = Some(Piece::new(PieceTypes::Pawn,
+                                                                     Colors::White,
+                                                                     Coords{x, y}));
+            }
+        }
         ChessEngine {
-            size: Size {w: *&size_temp.w, h:*&size_temp.h},
-            board: vec![vec![
-                Some(Piece::new(PieceTypes::Pawn, Colors::White)
-            ); *&size_temp.w as usize];
-                        *&size_temp.h as usize],
+            size: Size {w: *&temp_size.w, h:*&temp_size.h},
+            board: temp_board,
         }
     }
 
@@ -55,56 +60,56 @@ impl ChessEngine {
         // Black --------------------------------------------------------------------------
 
         // Rooks --------------------------------------------------------------------------
-        temp_engine.board[0][0] = Some(Piece::new(PieceTypes::Rook, Colors::Black));
+        temp_engine.board[0][0] = Some(Piece::new(PieceTypes::Rook, Colors::Black, Coords{x:0, y:0}));
 
-        temp_engine.board[0][7] = Some(Piece::new(PieceTypes::Rook, Colors::Black));
+        temp_engine.board[0][7] = Some(Piece::new(PieceTypes::Rook, Colors::Black, Coords{x:7, y:0}));
 
         // Knights --------------------------------------------------------------------------
-        temp_engine.board[0][1] = Some(Piece::new(PieceTypes::Knight, Colors::Black));
+        temp_engine.board[0][1] = Some(Piece::new(PieceTypes::Knight, Colors::Black, Coords{x:1, y:0}));
 
-        temp_engine.board[0][6] = Some(Piece::new(PieceTypes::Knight, Colors::Black));
+        temp_engine.board[0][6] = Some(Piece::new(PieceTypes::Knight, Colors::Black, Coords{x:6, y:0}));
 
         // Bishops --------------------------------------------------------------------------
-        temp_engine.board[0][2] = Some(Piece::new(PieceTypes::Bishop, Colors::Black));
+        temp_engine.board[0][2] = Some(Piece::new(PieceTypes::Bishop, Colors::Black, Coords{x:2, y:0}));
 
-        temp_engine.board[0][5] = Some(Piece::new(PieceTypes::Bishop, Colors::Black));
+        temp_engine.board[0][5] = Some(Piece::new(PieceTypes::Bishop, Colors::Black, Coords{x:5, y:0}));
 
         // Queen --------------------------------------------------------------------------
-        temp_engine.board[0][3] = Some(Piece::new(PieceTypes::Queen, Colors::Black));
+        temp_engine.board[0][3] = Some(Piece::new(PieceTypes::Queen, Colors::Black, Coords{x:3, y:0}));
 
         // King --------------------------------------------------------------------------
-        temp_engine.board[0][4] = Some(Piece::new(PieceTypes::King, Colors::Black));
+        temp_engine.board[0][4] = Some(Piece::new(PieceTypes::King, Colors::Black, Coords{x:4, y:0}));
 
         // Pawns --------------------------------------------------------------------------
         for x in 0..=7 {
-            temp_engine.board[1][x] = Some(Piece::new(PieceTypes::Pawn, Colors::Black));
+            temp_engine.board[1][x] = Some(Piece::new(PieceTypes::Pawn, Colors::Black, Coords{x:(x as u8), y:1}));
         }
 
         // White --------------------------------------------------------------------------
 
         // Rooks --------------------------------------------------------------------------
-        temp_engine.board[7][0] = Some(Piece::new(PieceTypes::Rook, Colors::White));
+        temp_engine.board[7][0] = Some(Piece::new(PieceTypes::Rook, Colors::White, Coords{x:0, y:7}));
 
-        temp_engine.board[7][7] = Some(Piece::new(PieceTypes::Rook, Colors::White));
+        temp_engine.board[7][7] = Some(Piece::new(PieceTypes::Rook, Colors::White, Coords{x:7, y:7}));
 
         // Knights --------------------------------------------------------------------------
-        temp_engine.board[7][1] = Some(Piece::new(PieceTypes::Knight, Colors::White));
+        temp_engine.board[7][1] = Some(Piece::new(PieceTypes::Knight, Colors::White, Coords{x:1, y:7}));
 
-        temp_engine.board[7][6] = Some(Piece::new(PieceTypes::Knight, Colors::White));
+        temp_engine.board[7][6] = Some(Piece::new(PieceTypes::Knight, Colors::White, Coords{x:6, y:7}));
         // Bishops --------------------------------------------------------------------------
-        temp_engine.board[7][2] = Some(Piece::new(PieceTypes::Bishop, Colors::White));
+        temp_engine.board[7][2] = Some(Piece::new(PieceTypes::Bishop, Colors::White, Coords{x:2, y:7}));
 
-        temp_engine.board[7][5] = Some(Piece::new(PieceTypes::Bishop, Colors::White));
+        temp_engine.board[7][5] = Some(Piece::new(PieceTypes::Bishop, Colors::White, Coords{x:5, y:7}));
 
         // Queen --------------------------------------------------------------------------
-        temp_engine.board[7][3] = Some(Piece::new(PieceTypes::Queen, Colors::White));
+        temp_engine.board[7][3] = Some(Piece::new(PieceTypes::Queen, Colors::White, Coords{x:3, y:7}));
 
         // King --------------------------------------------------------------------------
-        temp_engine.board[7][4] = Some(Piece::new(PieceTypes::King, Colors::White));
+        temp_engine.board[7][4] = Some(Piece::new(PieceTypes::King, Colors::White, Coords{x:4, y:7}));
 
         // Pawns --------------------------------------------------------------------------
         for x in 0..=7 {
-            temp_engine.board[6][x] = Some(Piece::new(PieceTypes::Pawn, Colors::White));
+            temp_engine.board[6][x] = Some(Piece::new(PieceTypes::Pawn, Colors::White, Coords{x:(x as u8), y:6}));
         }
 
         temp_engine

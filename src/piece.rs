@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use crate::colors::*;
 use crate::piece_types::*;
-use crate::size::*;
+use crate::coords::*;
 
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
@@ -10,15 +10,17 @@ pub struct Piece {
     pub piece_type: PieceTypes,
     pub notation: String,
     pub emoji: String,
+    pub coords: Coords,
 }
 
 impl Piece {
-    pub fn new(piece_type:PieceTypes, color:Colors) -> Piece {
+    pub fn new(piece_type:PieceTypes, color:Colors, coords:Coords) -> Piece {
         Piece {
             color,
             piece_type,
             notation: Self::get_notation_string(&piece_type.clone()),
-            emoji: Self::get_emoji_string(&piece_type.clone(), &color.clone())
+            emoji: Self::get_emoji_string(&piece_type.clone(), &color.clone()),
+            coords,
         }
     }
     // TODO: Very repetitive code, automate later
@@ -89,20 +91,28 @@ mod tests {
 
     #[test]
     fn create_white_pawn() {
-        let p = Piece::new(PieceTypes::Pawn, Colors::White);
+        let p = Piece::new(PieceTypes::Pawn,
+                           Colors::White,
+                           Coords{x:0, y:6});
         assert_eq!(p.piece_type, PieceTypes::Pawn);
         assert_eq!(p.color, Colors::White);
         assert_eq!(p.notation, "P ".to_string());
         assert_eq!(p.emoji, "♙ ".to_string());
+        assert_eq!(p.coords.x, 0);
+        assert_eq!(p.coords.y, 6);
     }
 
     #[test]
     fn create_black_king() {
-        let p = Piece::new(PieceTypes::King, Colors::Black);
+        let p = Piece::new(PieceTypes::King,
+                           Colors::Black,
+                           Coords{x:4, y:0});
         assert_eq!(p.piece_type, PieceTypes::King);
         assert_eq!(p.color, Colors::Black);
         assert_eq!(p.notation, "K ".to_string());
         assert_eq!(p.emoji, "♚ ".to_string());
+        assert_eq!(p.coords.x, 4);
+        assert_eq!(p.coords.y, 0);
     }
 
     //TODO: How to write this type of test
