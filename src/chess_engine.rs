@@ -22,12 +22,9 @@ impl ChessEngine {
         let size_temp = Size{w:8, h:8};
         ChessEngine {
             size: Size {w: *&size_temp.w, h:*&size_temp.h},
-            board: vec![vec![Some(Piece {
-                color: Colors::Black,
-                piece_type: PieceTypes::Pawn,
-                notation: Self::get_notation_string(&PieceTypes::Pawn),      // TODO: References of this style need refactoring
-                emoji: Self::get_emoji_string(&PieceTypes::Pawn, &Colors::Black)
-            }); *&size_temp.w as usize];
+            board: vec![vec![
+                Some(Piece::new(PieceTypes::Pawn, Colors::White)
+            ); *&size_temp.w as usize];
                         *&size_temp.h as usize],
         }
     }
@@ -58,147 +55,56 @@ impl ChessEngine {
         // Black --------------------------------------------------------------------------
 
         // Rooks --------------------------------------------------------------------------
-        temp_engine.board[0][0] = Some(Piece{
-            color: Colors::Black,
-            piece_type: PieceTypes::Rook,
-            notation: Self::get_notation_string(&PieceTypes::Rook),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Rook, &Colors::Black)
-        });
+        temp_engine.board[0][0] = Some(Piece::new(PieceTypes::Rook, Colors::Black));
 
-        temp_engine.board[0][7] = Some(Piece{
-            color: Colors::Black,
-            piece_type: PieceTypes::Rook,
-            notation: Self::get_notation_string(&PieceTypes::Rook),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Rook, &Colors::Black)
-        });
+        temp_engine.board[0][7] = Some(Piece::new(PieceTypes::Rook, Colors::Black));
 
         // Knights --------------------------------------------------------------------------
-        temp_engine.board[0][1] = Some(Piece{
-            color: Colors::Black,
-            piece_type: PieceTypes::Knight,
-            notation: Self::get_notation_string(&PieceTypes::Knight),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Knight, &Colors::Black)
-        });
+        temp_engine.board[0][1] = Some(Piece::new(PieceTypes::Knight, Colors::Black));
 
-        temp_engine.board[0][6] = Some(Piece{
-            color: Colors::Black,
-            piece_type: PieceTypes::Knight,
-            notation: Self::get_notation_string(&PieceTypes::Knight),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Knight, &Colors::Black)
-        });
+        temp_engine.board[0][6] = Some(Piece::new(PieceTypes::Knight, Colors::Black));
 
         // Bishops --------------------------------------------------------------------------
-        temp_engine.board[0][2] = Some(Piece{
-            color: Colors::Black,
-            piece_type: PieceTypes::Bishop,
-            notation: Self::get_notation_string(&PieceTypes::Bishop),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Bishop, &Colors::Black)
-        });
+        temp_engine.board[0][2] = Some(Piece::new(PieceTypes::Bishop, Colors::Black));
 
-        temp_engine.board[0][5] = Some(Piece{
-            color: Colors::Black,
-            piece_type: PieceTypes::Bishop,
-            notation: Self::get_notation_string(&PieceTypes::Bishop),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Bishop, &Colors::Black)
-        });
+        temp_engine.board[0][5] = Some(Piece::new(PieceTypes::Bishop, Colors::Black));
 
         // Queen --------------------------------------------------------------------------
-        temp_engine.board[0][3] = Some(Piece{
-            color: Colors::Black,
-            piece_type: PieceTypes::Queen,
-            notation: Self::get_notation_string(&PieceTypes::Queen),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Queen, &Colors::Black)
-        });
+        temp_engine.board[0][3] = Some(Piece::new(PieceTypes::Queen, Colors::Black));
 
         // King --------------------------------------------------------------------------
-        temp_engine.board[0][4] = Some(Piece{
-            color: Colors::Black,
-            piece_type: PieceTypes::King,
-            notation: Self::get_notation_string(&PieceTypes::King),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::King, &Colors::Black)
-        });
+        temp_engine.board[0][4] = Some(Piece::new(PieceTypes::King, Colors::Black));
 
         // Pawns --------------------------------------------------------------------------
         for x in 0..=7 {
-            temp_engine.board[1][x] = Some(Piece{
-                color: Colors::Black,
-                piece_type: PieceTypes::Pawn,
-                notation: Self::get_notation_string(&PieceTypes::Pawn),      // TODO: References of this style need refactoring
-                emoji: Self::get_emoji_string(&PieceTypes::Pawn, &Colors::Black)
-            });
+            temp_engine.board[1][x] = Some(Piece::new(PieceTypes::Pawn, Colors::Black));
         }
 
         // White --------------------------------------------------------------------------
 
         // Rooks --------------------------------------------------------------------------
-        temp_engine.board[7][0] = Some(Piece{
-            color: Colors::White,
-            piece_type: PieceTypes::Rook,
-            notation: Self::get_notation_string(&PieceTypes::Rook),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Rook, &Colors::White)
-        });
+        temp_engine.board[7][0] = Some(Piece::new(PieceTypes::Rook, Colors::White));
 
-        temp_engine.board[7][7] = Some(Piece{
-            color: Colors::White,
-            piece_type: PieceTypes::Rook,
-            notation: Self::get_notation_string(&PieceTypes::Rook),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Rook, &Colors::White)
-        });
+        temp_engine.board[7][7] = Some(Piece::new(PieceTypes::Rook, Colors::White));
 
         // Knights --------------------------------------------------------------------------
-        temp_engine.board[7][1] = Some(Piece{
-            color: Colors::White,
-            piece_type: PieceTypes::Knight,
-            notation: Self::get_notation_string(&PieceTypes::Knight),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Knight, &Colors::White)
-        });
+        temp_engine.board[7][1] = Some(Piece::new(PieceTypes::Knight, Colors::White));
 
-        temp_engine.board[7][6] = Some(Piece{
-            color: Colors::White,
-            piece_type: PieceTypes::Knight,
-            notation: Self::get_notation_string(&PieceTypes::Knight),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Knight, &Colors::White)
-        });
-
+        temp_engine.board[7][6] = Some(Piece::new(PieceTypes::Knight, Colors::White));
         // Bishops --------------------------------------------------------------------------
-        temp_engine.board[7][2] = Some(Piece{
-            color: Colors::White,
-            piece_type: PieceTypes::Bishop,
-            notation: Self::get_notation_string(&PieceTypes::Bishop),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Bishop, &Colors::White)
-        });
+        temp_engine.board[7][2] = Some(Piece::new(PieceTypes::Bishop, Colors::White));
 
-        temp_engine.board[7][5] = Some(Piece{
-            color: Colors::White,
-            piece_type: PieceTypes::Bishop,
-            notation: Self::get_notation_string(&PieceTypes::Bishop),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Bishop, &Colors::White)
-        });
+        temp_engine.board[7][5] = Some(Piece::new(PieceTypes::Bishop, Colors::White));
 
         // Queen --------------------------------------------------------------------------
-        temp_engine.board[7][3] = Some(Piece{
-            color: Colors::White,
-            piece_type: PieceTypes::Queen,
-            notation: Self::get_notation_string(&PieceTypes::Queen),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::Queen, &Colors::White)
-        });
+        temp_engine.board[7][3] = Some(Piece::new(PieceTypes::Queen, Colors::White));
 
         // King --------------------------------------------------------------------------
-        temp_engine.board[7][4] = Some(Piece{
-            color: Colors::White,
-            piece_type: PieceTypes::King,
-            notation: Self::get_notation_string(&PieceTypes::King),      // TODO: References of this style need refactoring
-            emoji: Self::get_emoji_string(&PieceTypes::King, &Colors::White)
-        });
+        temp_engine.board[7][4] = Some(Piece::new(PieceTypes::King, Colors::White));
 
         // Pawns --------------------------------------------------------------------------
         for x in 0..=7 {
-            temp_engine.board[6][x] = Some(Piece{
-                color: Colors::White,
-                piece_type: PieceTypes::Pawn,
-                notation: Self::get_notation_string(&PieceTypes::Pawn),      // TODO: References of this style need refactoring
-                emoji: Self::get_emoji_string(&PieceTypes::Pawn, &Colors::White)
-            });
+            temp_engine.board[6][x] = Some(Piece::new(PieceTypes::Pawn, Colors::White));
         }
 
         temp_engine
@@ -238,66 +144,6 @@ impl ChessEngine {
         println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
     }
 
-    // TODO: Very repetitive code, automate later
-    fn get_piece_to_notation_hashmap() -> HashMap<PieceTypes, String> {
-        let mut map: HashMap<PieceTypes, String> = HashMap::new();
-        map.insert(PieceTypes::King, "K ".to_string());
-        map.insert(PieceTypes::Rook, "R ".to_string());
-        map.insert(PieceTypes::Bishop, "B ".to_string());
-        map.insert(PieceTypes::Queen, "Q ".to_string());
-        map.insert(PieceTypes::Knight, "Kn".to_string());
-        map.insert(PieceTypes::Pawn, "P ".to_string());
-
-        map
-    }
-
-    fn get_notation_string(piece: &PieceTypes) -> String {
-        (&Self::get_piece_to_notation_hashmap()
-            .get(&piece)
-            .unwrap()).to_string()
-    }
-
-    // TODO: Very repetitive code, automate later
-    fn get_white_emoji_hashmap() -> HashMap<PieceTypes, String> {
-        let mut map: HashMap<PieceTypes, String> = HashMap::new();
-        map.insert(PieceTypes::King, "♔ ".to_string());
-        map.insert(PieceTypes::Rook, "♖ ".to_string());
-        map.insert(PieceTypes::Bishop, "♗ ".to_string());
-        map.insert(PieceTypes::Queen, "♕ ".to_string());
-        map.insert(PieceTypes::Knight, "♘ ".to_string());
-        map.insert(PieceTypes::Pawn, "♙ ".to_string());
-
-        map
-    }
-
-    // TODO: Very repetitive code, automate later
-    fn get_black_emoji_hashmap() -> HashMap<PieceTypes, String> {
-        let mut map: HashMap<PieceTypes, String> = HashMap::new();
-        map.insert(PieceTypes::King, "♚ ".to_string());
-        map.insert(PieceTypes::Rook, "♜ ".to_string());
-        map.insert(PieceTypes::Bishop, "♝ ".to_string());
-        map.insert(PieceTypes::Queen, "♛ ".to_string());
-        map.insert(PieceTypes::Knight, "♞ ".to_string());
-        map.insert(PieceTypes::Pawn, "♟ ".to_string());
-
-        map
-    }
-
-    // TODO: Should be fixed because of underlying functions duplication
-    fn get_emoji_string(piece: &PieceTypes, color: &Colors) -> String {
-        match color {
-            Colors::White => {
-                (&Self::get_white_emoji_hashmap()
-                    .get(&piece)
-                    .unwrap()).to_string()
-            }
-            Colors::Black => {
-                (&Self::get_black_emoji_hashmap()
-                    .get(&piece)
-                    .unwrap()).to_string()
-            }
-        }
-    }
 }
 
 #[cfg(test)]
