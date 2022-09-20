@@ -83,43 +83,33 @@ impl Piece {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//
-//     #[test]
-//     fn create_white_pawn() {
-//         let s = Piece{};
-//         assert_eq!(s.w, 0);
-//         assert_eq!(s.h, 0);
-//     }
-//
-//     #[test]
-//     fn assign_ones() {
-//         let s = Size{w:1, h:1};
-//         assert_eq!(s.w, 1);
-//         assert_eq!(s.h, 1);
-//     }
-//
-//     #[test]
-//     fn assign_different_values() {
-//         let s = Size{w:10, h:100};
-//         assert_eq!(s.w, 10);
-//         assert_eq!(s.h, 100);
-//     }
-//
-//     #[test]
-//     fn assign_u8_limit_values() {
-//         let s = Size{w:255, h:255};
-//         assert_eq!(s.w, 255);
-//         assert_eq!(s.h, 255);
-//     }
-//
-//     //TODO: How to write this type of test
-//
-//     // #[test]
-//     // #[should_panic]
-//     // fn assign_larger_value_than_u8() {
-//     //     let s = Size{w:1000, h:1000};
-//     // }
-// }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn create_white_pawn() {
+        let p = Piece::new(PieceTypes::Pawn, Colors::White);
+        assert_eq!(p.piece_type, PieceTypes::Pawn);
+        assert_eq!(p.color, Colors::White);
+        assert_eq!(p.notation, "P ".to_string());
+        assert_eq!(p.emoji, "♙ ".to_string());
+    }
+
+    #[test]
+    fn create_black_king() {
+        let p = Piece::new(PieceTypes::King, Colors::Black);
+        assert_eq!(p.piece_type, PieceTypes::King);
+        assert_eq!(p.color, Colors::Black);
+        assert_eq!(p.notation, "K ".to_string());
+        assert_eq!(p.emoji, "♚ ".to_string());
+    }
+
+    //TODO: How to write this type of test
+
+    // #[test]
+    // #[should_panic]
+    // fn assign_larger_value_than_u8() {
+    //     let s = Size{w:1000, h:1000};
+    // }
+}
