@@ -25,7 +25,7 @@ impl ChessEngine {
             for y in 0..temp_size.h {
                 temp_board[x as usize][y as usize] = Some(Piece::new(PieceTypes::Pawn,
                                                                      Colors::White,
-                                                                     Coords{x, y}));
+                                                                     Coords::new(x, y)));
             }
         }
         ChessEngine {
@@ -60,56 +60,56 @@ impl ChessEngine {
         // Black --------------------------------------------------------------------------
 
         // Rooks --------------------------------------------------------------------------
-        temp_engine.board[0][0] = Some(Piece::new(PieceTypes::Rook, Colors::Black, Coords{x:0, y:0}));
+        temp_engine.board[0][0] = Some(Piece::new(PieceTypes::Rook, Colors::Black, Coords::new(0,0)));
 
-        temp_engine.board[0][7] = Some(Piece::new(PieceTypes::Rook, Colors::Black, Coords{x:7, y:0}));
+        temp_engine.board[0][7] = Some(Piece::new(PieceTypes::Rook, Colors::Black, Coords::new(7, 0)));
 
         // Knights --------------------------------------------------------------------------
-        temp_engine.board[0][1] = Some(Piece::new(PieceTypes::Knight, Colors::Black, Coords{x:1, y:0}));
+        temp_engine.board[0][1] = Some(Piece::new(PieceTypes::Knight, Colors::Black, Coords::new(1, 0)));
 
-        temp_engine.board[0][6] = Some(Piece::new(PieceTypes::Knight, Colors::Black, Coords{x:6, y:0}));
+        temp_engine.board[0][6] = Some(Piece::new(PieceTypes::Knight, Colors::Black, Coords::new(6, 0)));
 
         // Bishops --------------------------------------------------------------------------
-        temp_engine.board[0][2] = Some(Piece::new(PieceTypes::Bishop, Colors::Black, Coords{x:2, y:0}));
+        temp_engine.board[0][2] = Some(Piece::new(PieceTypes::Bishop, Colors::Black, Coords::new(2, 0)));
 
-        temp_engine.board[0][5] = Some(Piece::new(PieceTypes::Bishop, Colors::Black, Coords{x:5, y:0}));
+        temp_engine.board[0][5] = Some(Piece::new(PieceTypes::Bishop, Colors::Black, Coords::new(5, 0)));
 
         // Queen --------------------------------------------------------------------------
-        temp_engine.board[0][3] = Some(Piece::new(PieceTypes::Queen, Colors::Black, Coords{x:3, y:0}));
+        temp_engine.board[0][3] = Some(Piece::new(PieceTypes::Queen, Colors::Black, Coords::new(3, 0)));
 
         // King --------------------------------------------------------------------------
-        temp_engine.board[0][4] = Some(Piece::new(PieceTypes::King, Colors::Black, Coords{x:4, y:0}));
+        temp_engine.board[0][4] = Some(Piece::new(PieceTypes::King, Colors::Black, Coords::new(4, 0)));
 
         // Pawns --------------------------------------------------------------------------
         for x in 0..=7 {
-            temp_engine.board[1][x] = Some(Piece::new(PieceTypes::Pawn, Colors::Black, Coords{x:(x as u8), y:1}));
+            temp_engine.board[1][x] = Some(Piece::new(PieceTypes::Pawn, Colors::Black, Coords::new((x as u8), 1)));
         }
 
         // White --------------------------------------------------------------------------
 
         // Rooks --------------------------------------------------------------------------
-        temp_engine.board[7][0] = Some(Piece::new(PieceTypes::Rook, Colors::White, Coords{x:0, y:7}));
+        temp_engine.board[7][0] = Some(Piece::new(PieceTypes::Rook, Colors::White, Coords::new(0, 7)));
 
-        temp_engine.board[7][7] = Some(Piece::new(PieceTypes::Rook, Colors::White, Coords{x:7, y:7}));
+        temp_engine.board[7][7] = Some(Piece::new(PieceTypes::Rook, Colors::White, Coords::new(7, 7)));
 
         // Knights --------------------------------------------------------------------------
-        temp_engine.board[7][1] = Some(Piece::new(PieceTypes::Knight, Colors::White, Coords{x:1, y:7}));
+        temp_engine.board[7][1] = Some(Piece::new(PieceTypes::Knight, Colors::White, Coords::new(1, 7)));
 
-        temp_engine.board[7][6] = Some(Piece::new(PieceTypes::Knight, Colors::White, Coords{x:6, y:7}));
+        temp_engine.board[7][6] = Some(Piece::new(PieceTypes::Knight, Colors::White, Coords::new(6, 7)));
         // Bishops --------------------------------------------------------------------------
-        temp_engine.board[7][2] = Some(Piece::new(PieceTypes::Bishop, Colors::White, Coords{x:2, y:7}));
+        temp_engine.board[7][2] = Some(Piece::new(PieceTypes::Bishop, Colors::White, Coords::new(2, 7)));
 
-        temp_engine.board[7][5] = Some(Piece::new(PieceTypes::Bishop, Colors::White, Coords{x:5, y:7}));
+        temp_engine.board[7][5] = Some(Piece::new(PieceTypes::Bishop, Colors::White, Coords::new(5, 7)));
 
         // Queen --------------------------------------------------------------------------
-        temp_engine.board[7][3] = Some(Piece::new(PieceTypes::Queen, Colors::White, Coords{x:3, y:7}));
+        temp_engine.board[7][3] = Some(Piece::new(PieceTypes::Queen, Colors::White, Coords::new(3, 7)));
 
         // King --------------------------------------------------------------------------
-        temp_engine.board[7][4] = Some(Piece::new(PieceTypes::King, Colors::White, Coords{x:4, y:7}));
+        temp_engine.board[7][4] = Some(Piece::new(PieceTypes::King, Colors::White, Coords::new(4, 7)));
 
         // Pawns --------------------------------------------------------------------------
         for x in 0..=7 {
-            temp_engine.board[6][x] = Some(Piece::new(PieceTypes::Pawn, Colors::White, Coords{x:(x as u8), y:6}));
+            temp_engine.board[6][x] = Some(Piece::new(PieceTypes::Pawn, Colors::White, Coords::new((x as u8), 6)));
         }
 
         temp_engine
@@ -147,6 +147,10 @@ impl ChessEngine {
             numbered_rank -= 1;
         });
         println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
+    }
+
+    pub fn force_move_piece_with_coords(from: Coords, to:Coords) {
+        // TODO: Checking for coords being within range
     }
 
 }

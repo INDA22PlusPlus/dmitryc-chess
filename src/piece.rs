@@ -93,7 +93,7 @@ mod tests {
     fn create_white_pawn() {
         let p = Piece::new(PieceTypes::Pawn,
                            Colors::White,
-                           Coords{x:0, y:6});
+                           Coords::new(0, 6));
         assert_eq!(p.piece_type, PieceTypes::Pawn);
         assert_eq!(p.color, Colors::White);
         assert_eq!(p.notation, "P ".to_string());
@@ -106,7 +106,7 @@ mod tests {
     fn create_black_king() {
         let p = Piece::new(PieceTypes::King,
                            Colors::Black,
-                           Coords{x:4, y:0});
+                           Coords::new(4, 0));
         assert_eq!(p.piece_type, PieceTypes::King);
         assert_eq!(p.color, Colors::Black);
         assert_eq!(p.notation, "K ".to_string());
