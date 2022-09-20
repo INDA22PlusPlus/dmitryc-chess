@@ -115,7 +115,7 @@ impl ChessEngine {
         self.board.iter().for_each(|row| {
             println!("{}", "-".repeat(25));
             row.iter().for_each(|square| {
-                print!("|{}", if square.is_some() {square.as_ref().unwrap().emoji.to_string()} else {"  ".to_string()});
+                print!("|{}", if square.is_some() {square.as_ref().unwrap().emoji.to_string()} else {"  ".to_string()});    // TODO Figure out the right way to do this
             });
             println!("|");
         });
@@ -135,7 +135,7 @@ impl ChessEngine {
             println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
             print!("{} ", &numbered_rank);
             row.iter().for_each(|square| {
-                print!("|{}", if square.is_some() {square.as_ref().unwrap().emoji.to_string()} else {"  ".to_string()});
+                print!("|{}", if square.is_some() {square.as_ref().unwrap().emoji.to_string()} else {"  ".to_string()});    // TODO Figure out the right way to do this
             });
             println!("|");
 
