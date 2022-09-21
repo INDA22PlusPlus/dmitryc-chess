@@ -1,11 +1,11 @@
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub struct Size {
-    pub w:u8,
-    pub h:u8,
+    pub w:usize,
+    pub h:usize,
 }
 
 impl Size {
-    pub fn new(w:u8, h:u8) -> Size {
+    pub fn new(w:usize, h:usize) -> Size {
         if w == 0 || w > 8 {
             panic!("Width must be between 1 and 8!")
         }
@@ -18,12 +18,12 @@ impl Size {
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub struct Coords {
-    pub x:u8,
-    pub y:u8,
+    pub x:usize,
+    pub y:usize,
 }
 
 impl Coords {
-    pub fn new(x:u8, y:u8) -> Coords {
+    pub fn new(x:usize, y:usize) -> Coords {
         if x > 7 {
             panic!("Width must be between 0 and 7!")
         }

@@ -69,7 +69,7 @@ impl ChessEngine {
 
         // Pawns --------------------------------------------------------------------------
         for x in 0..=7 {
-            temp_engine.board[1][x] = Some(Piece::new(PieceTypes::Pawn, Colors::Black, Coords::new(x as u8, 1)));
+            temp_engine.board[1][x] = Some(Piece::new(PieceTypes::Pawn, Colors::Black, Coords::new(x, 1)));
         }
 
         // White --------------------------------------------------------------------------
@@ -96,7 +96,7 @@ impl ChessEngine {
 
         // Pawns --------------------------------------------------------------------------
         for x in 0..=7 {
-            temp_engine.board[6][x] = Some(Piece::new(PieceTypes::Pawn, Colors::White, Coords::new(x as u8, 6)));
+            temp_engine.board[6][x] = Some(Piece::new(PieceTypes::Pawn, Colors::White, Coords::new(x, 6)));
         }
 
         temp_engine
@@ -136,8 +136,12 @@ impl ChessEngine {
         println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
     }
 
-    pub fn force_move_piece_with_coords(self, from: Coords, to:Coords) {
-        // if self.board[from.x][from.y].isSome
+    // TODO: Fix scuffed moving of elements from one vec position to another
+    pub fn force_move_piece_with_coords(&mut self, from: Coords, to:Coords) {
+        if self.board[from.x][from.y].is_some(){
+            self.board[to.x][to.y] = self.board[from.x][from.y].clone();
+            self.board[from.x][from.y] = None;
+        }
     }
 
 }
@@ -156,15 +160,11 @@ mod tests {
         }
     }
 
-    fn setup_chess_engine() -> ChessEngine {
-        ChessEngine::new()
-    }
-
     #[test]
     fn print_empty_board() {
         let chess_engine = ChessEngine::create_engine_with_empty_board();
 
-        chess_engine.print_board()
+        chess_engine.print_board();
 
     }
 
@@ -172,14 +172,14 @@ mod tests {
     fn print_filled_board() {
         let chess_engine = ChessEngine::create_engine_with_white_board();
 
-        chess_engine.print_board()
+        chess_engine.print_board();
     }
 
     #[test]
     fn print_empty_board_with_ranks() {
         let chess_engine = ChessEngine::create_engine_with_empty_board();
 
-        chess_engine.print_board_with_ranks()
+        chess_engine.print_board_with_ranks();
 
     }
 
@@ -187,14 +187,14 @@ mod tests {
     fn print_filled_board_with_ranks() {
         let chess_engine = ChessEngine::create_engine_with_white_board();
 
-        chess_engine.print_board_with_ranks()
+        chess_engine.print_board_with_ranks();
     }
 
     #[test]
     fn print_standard_board() {
         let chess_engine = ChessEngine::new();
 
-        chess_engine.print_board()
+        chess_engine.print_board();
 
     }
 
@@ -202,6 +202,34 @@ mod tests {
     fn print_standard_board_with_ranks() {
         let chess_engine = ChessEngine::new();
 
-        chess_engine.print_board_with_ranks()
+        chess_engine.print_board_with_ranks();
+    }
+
+    #[test]
+    fn test_piece_move_to_empty_square() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.print_board_with_ranks();
+
+        chess_engine.force_move_piece_with_coords(
+            Coords::new(7, 7),
+            Coords::new(3,3)
+        );
+
+        chess_engine.print_board_with_ranks();
+    }
+
+    #[test]
+    fn test_none_move_to_empty_square() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.print_board_with_ranks();
+
+        chess_engine.force_move_piece_with_coords(
+            Coords::new(3, 3),
+            Coords::new(4,4)
+        );
+
+        chess_engine.print_board_with_ranks();
     }
 }
