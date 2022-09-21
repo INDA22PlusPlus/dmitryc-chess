@@ -16,7 +16,7 @@ impl ChessEngine {
     }
 
     // TODO: Non-readable code, needs refactoring later
-    fn create_engine_with_white_board() -> ChessEngine {
+    fn create_engine_filled_with_white_board() -> ChessEngine {
         let temp_size = Size::new(8, 8);
         let mut temp_board = vec![vec![None;temp_size.w as usize]; temp_size.h as usize];
         for x in 0..temp_size.w  {
@@ -163,6 +163,50 @@ mod tests {
     //     }
     // }
 
+    #[test]
+    fn test_create_new() {
+        let chess_engine = ChessEngine::new();
+    }
+
+    #[test]
+    fn test_create_standard_board() {
+        let chess_engine = ChessEngine::create_engine_with_standard_board();
+    }
+
+    #[test]
+    fn test_create_empty_board() {
+        let chess_engine = ChessEngine::create_engine_with_empty_board();
+    }
+
+    #[test]
+    fn test_create_filled_board() {
+        let chess_engine = ChessEngine::create_engine_filled_with_white_board();
+    }
+
+    #[test]
+    fn test_new_selected_board_is_none() {
+        let chess_engine = ChessEngine::new();
+        assert_eq!(chess_engine.selected_piece, None)
+    }
+
+    #[test]
+    fn test_standard_selected_board_is_none() {
+        let chess_engine = ChessEngine::create_engine_with_standard_board();
+        assert_eq!(chess_engine.selected_piece, None)
+    }
+
+    #[test]
+    fn test_empty_selected_board_is_none() {
+        let chess_engine = ChessEngine::create_engine_with_empty_board();
+        assert_eq!(chess_engine.selected_piece, None)
+    }
+
+    #[test]
+    fn test_filled_board_selected_is_none() {
+        let chess_engine = ChessEngine::create_engine_filled_with_white_board();
+        assert_eq!(chess_engine.selected_piece, None)
+    }
+
     //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
     fn print_empty_board() {
@@ -175,7 +219,7 @@ mod tests {
     //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
     fn print_filled_board() {
-        let chess_engine = ChessEngine::create_engine_with_white_board();
+        let chess_engine = ChessEngine::create_engine_filled_with_white_board();
 
         chess_engine.print_board();
     }
@@ -192,7 +236,7 @@ mod tests {
     //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
     fn print_filled_board_with_ranks() {
-        let chess_engine = ChessEngine::create_engine_with_white_board();
+        let chess_engine = ChessEngine::create_engine_filled_with_white_board();
 
         chess_engine.print_board_with_ranks();
     }
