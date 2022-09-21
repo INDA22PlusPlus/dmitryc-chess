@@ -105,12 +105,16 @@ impl ChessEngine {
         temp_engine
     }
 
+    fn get_piece_string_from_option(square: &Option<Piece>) -> String {
+        if square.is_some() {square.as_ref().unwrap().emoji.to_string()} else {"  ".to_string()}
+    }
+
     // TODO: Horrible code, needs refactoring later
     pub fn print_board(&self) {
         self.board.iter().for_each(|row| {
             println!("{}", "-".repeat(25));
             row.iter().for_each(|square| {
-                print!("|{}", if square.is_some() {square.as_ref().unwrap().emoji.to_string()} else {"  ".to_string()});    // TODO Figure out the right way to do this
+                print!("|{}", Self::get_piece_string_from_option(square));    // TODO Figure out the right way to do this
             });
             println!("|");
         });
@@ -130,7 +134,7 @@ impl ChessEngine {
             println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
             print!("{} ", &numbered_rank);
             row.iter().for_each(|square| {
-                print!("|{}", if square.is_some() {square.as_ref().unwrap().emoji.to_string()} else {"  ".to_string()});    // TODO Figure out the right way to do this
+                print!("|{}", Self::get_piece_string_from_option(square));    // TODO Figure out the right way to do this
             });
             println!("|");
 
@@ -147,6 +151,9 @@ impl ChessEngine {
         }
     }
 
+    pub fn get_piece_with_coords(&self, x:usize, y:usize) -> Option<Piece> {
+        self.board[y][x].clone()
+    }
 }
 
 #[cfg(test)]
@@ -347,4 +354,44 @@ mod tests {
         );
     }
 
+    #[test]
+    fn test_get_piece() {
+        let mut chess_engine = ChessEngine::new();
+
+        // println!("{}", ChessEngine::get_piece_string_from_option(&chess_engine.get_piece_with_coords(7, 7)));
+
+        assert_eq!(chess_engine.get_piece_with_coords(7, 7), chess_engine.board[7][7].clone());
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_get_piece_exceeding_coords() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.get_piece_with_coords(8, 8);
+    }
+
+    #[test]
+    fn test_manual_selection() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.selected_piece = chess_engine.get_piece_with_coords(7, 7);
+
+        // println!("{}", ChessEngine::get_piece_string_from_option(&chess_engine.selected_piece));
+
+        assert_eq!(chess_engine.selected_piece, chess_engine.get_piece_with_coords(7, 7));
+    }
+
+    #[test]
+    fn test_get_piece_string() {
+        let mut chess_engine = ChessEngine::new();
+
+        let piece_string = ChessEngine::get_piece_string_from_option(
+            &chess_engine.get_piece_with_coords(7, 7)
+        );
+
+        println!("{}", piece_string);
+
+        assert_eq!(piece_string, "♖ ");
+    }
 }
