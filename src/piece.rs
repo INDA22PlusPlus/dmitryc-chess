@@ -83,6 +83,10 @@ impl Piece {
             }
         }
     }
+
+    pub fn set_coords(&mut self, coords: Coords){
+        self.coords = coords;
+    }
 }
 
 #[cfg(test)]

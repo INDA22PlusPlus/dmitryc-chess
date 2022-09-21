@@ -3,6 +3,7 @@ use crate::colors::*;
 use crate::piece_types::*;
 use crate::piece::*;
 
+#[derive(Clone)]
 pub struct ChessEngine{
     pub board: Vec<Vec<Option<Piece>>>,
     size: Size,
@@ -146,19 +147,30 @@ impl ChessEngine {
     // TODO: Fix scuffed moving of elements from one vec position to another
     pub fn force_move_piece_with_coords(&mut self, from: Coords, to:Coords) {
         if self.board[from.y][from.x].is_some(){
-            self.board[to.y][to.x] = self.board[from.x][from.y].clone();
+            // TODO: Fix creating of new object instead of moving existing
+            self.board[to.y][to.x] = Some(Piece::new(
+                self.board[from.y][from.x].as_ref().unwrap().piece_type,
+                self.board[from.y][from.x].as_ref().unwrap().color,
+                to));
+
+            // self.board[to.y][to.x] = self.board[from.y][from.x].clone();
+            // self.board[to.y][to.x].unwrap().set_coords(to);              \\ How to fix?
+
             self.board[from.y][from.x] = None;
         }
     }
 
-    pub fn get_piece_with_coords(&self, x:usize, y:usize) -> Option<Piece> {
+    pub fn get_piece_option_with_coords(&self, x:usize, y:usize) -> Option<Piece> {
         self.board[y][x].clone()
     }
 
-    pub fn force_move_selected_piece_with_coords(&mut self, to:Coords) {
+    pub fn force_move_selected_piece_with_coords(&mut self, x:usize, y:usize) {
         if self.selected_piece.is_some(){
-            self.force_move_piece_with_coords(self.selected_piece.as_ref().unwrap().coords, to);
-
+            self.force_move_piece_with_coords(
+                self.selected_piece.as_ref().unwrap().coords,
+                Coords{x, y}
+            );
+            self.selected_piece = None;
         }
     }
 }
@@ -272,41 +284,66 @@ mod tests {
         chess_engine.print_board_with_ranks();
     }
 
-    //TODO: Need to fix tests to compare to board states (or worst case strings)
+    // TODO: DEFINITELY FIX THE RETURN VALUE PROBLEM I HATE THIS
+    fn chess_engine_move_piece_from_to_assert(mut chess_engine:
+                                              ChessEngine,
+                                              from: Coords,
+                                              to: Coords) -> ChessEngine {
+
+        // chess_engine.print_board_with_ranks();
+        // println!("{:?}", chess_engine.get_piece_option_with_coords(from.x, from.y));
+        // println!("{:?}", chess_engine.get_piece_option_with_coords(to.x, to.y));
+
+        //TODO: Need to fix this
+        let mut piece_to_compare_to = if chess_engine.get_piece_option_with_coords(from.x, from.y).is_some() {
+            Some(Piece::new(
+                chess_engine.get_piece_option_with_coords(from.x, from.y).as_ref().unwrap().piece_type,
+                chess_engine.get_piece_option_with_coords(from.x, from.y).as_ref().unwrap().color,
+                to
+            ))
+        } else {chess_engine.get_piece_option_with_coords(to.x, to.y)};
+
+        chess_engine.force_move_piece_with_coords(from, to);
+
+        // chess_engine.print_board_with_ranks();
+        // println!("{:?}", chess_engine.get_piece_option_with_coords(from.x, from.y));
+        // println!("{:?}", chess_engine.get_piece_option_with_coords(to.x, to.y));
+
+        assert_eq!(chess_engine.get_piece_option_with_coords(from.x, from.y), None);
+        assert_eq!(chess_engine.get_piece_option_with_coords(to.x, to.y), piece_to_compare_to);
+
+        chess_engine
+    }
+
     #[test]
     fn test_piece_move_to_empty_square() {
         let mut chess_engine = ChessEngine::new();
 
-        chess_engine.print_board_with_ranks();
-
-        chess_engine.force_move_piece_with_coords(
-            Coords::new(7, 7),
-            Coords::new(3,3)
+        chess_engine_move_piece_from_to_assert(
+            chess_engine,
+            Coords{ x: 7, y: 7 },
+            Coords { x: 3, y: 3 }
         );
-
-        chess_engine.print_board_with_ranks();
     }
 
-    //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
     fn test_piece_move_to_occupied_square() {
         let mut chess_engine = ChessEngine::new();
 
-        chess_engine.print_board_with_ranks();
-
-        chess_engine.force_move_piece_with_coords(
-            Coords::new(7, 7),
-            Coords::new(7,0)
+        chess_engine = chess_engine_move_piece_from_to_assert(
+            chess_engine,
+            Coords{ x: 7, y: 7 },
+            Coords { x: 7, y: 0 }
         );
 
-        chess_engine.print_board_with_ranks();
-
-        chess_engine.force_move_piece_with_coords(
-            Coords::new(7, 0),
-            Coords::new(7,3)
+        chess_engine = chess_engine_move_piece_from_to_assert(
+            chess_engine,
+            Coords{ x: 7, y: 0 },
+            Coords { x: 3, y: 3 }
         );
 
-        chess_engine.print_board_with_ranks();
+        // chess_engine.print_board_with_ranks();
+
     }
 
     //TODO: Need to fix tests to compare to board states (or worst case strings)
@@ -314,14 +351,12 @@ mod tests {
     fn test_empty_move_to_empty_square() {
         let mut chess_engine = ChessEngine::new();
 
-        chess_engine.print_board_with_ranks();
-
-        chess_engine.force_move_piece_with_coords(
-            Coords::new(3, 3),
-            Coords::new(4,4)
+        chess_engine = chess_engine_move_piece_from_to_assert(
+            chess_engine,
+            Coords{ x: 3, y: 3 },
+            Coords { x: 4, y: 4 }
         );
 
-        chess_engine.print_board_with_ranks();
     }
 
     //TODO: Need to fix tests to compare to board states (or worst case strings)
@@ -329,14 +364,11 @@ mod tests {
     fn test_empty_move_to_occupied_square() {
         let mut chess_engine = ChessEngine::new();
 
-        chess_engine.print_board_with_ranks();
-
-        chess_engine.force_move_piece_with_coords(
-            Coords::new(3, 3),
-            Coords::new(7,7)
+        chess_engine = chess_engine_move_piece_from_to_assert(
+            chess_engine,
+            Coords{ x: 3, y: 3 },
+            Coords { x: 7, y: 7 }
         );
-
-        chess_engine.print_board_with_ranks();
     }
 
     #[test]
@@ -367,7 +399,7 @@ mod tests {
 
         // println!("{}", ChessEngine::get_piece_string_from_option(&chess_engine.get_piece_with_coords(7, 7)));
 
-        assert_eq!(chess_engine.get_piece_with_coords(7, 7), chess_engine.board[7][7].clone());
+        assert_eq!(chess_engine.get_piece_option_with_coords(7, 7), chess_engine.board[7][7].clone());
     }
 
     #[test]
@@ -375,18 +407,18 @@ mod tests {
     fn test_get_piece_exceeding_coords() {
         let mut chess_engine = ChessEngine::new();
 
-        chess_engine.get_piece_with_coords(8, 8);
+        chess_engine.get_piece_option_with_coords(8, 8);
     }
 
     #[test]
     fn test_manual_selection() {
         let mut chess_engine = ChessEngine::new();
 
-        chess_engine.selected_piece = chess_engine.get_piece_with_coords(7, 7);
+        chess_engine.selected_piece = chess_engine.get_piece_option_with_coords(7, 7);
 
         // println!("{}", ChessEngine::get_piece_string_from_option(&chess_engine.selected_piece));
 
-        assert_eq!(chess_engine.selected_piece, chess_engine.get_piece_with_coords(7, 7));
+        assert_eq!(chess_engine.selected_piece, chess_engine.get_piece_option_with_coords(7, 7));
     }
 
     #[test]
@@ -394,11 +426,44 @@ mod tests {
         let mut chess_engine = ChessEngine::new();
 
         let piece_string = ChessEngine::get_piece_string_from_option(
-            &chess_engine.get_piece_with_coords(7, 7)
+            &chess_engine.get_piece_option_with_coords(7, 7)
         );
 
         println!("{}", piece_string);
 
         assert_eq!(piece_string, "♖ ");
+    }
+
+    #[test]
+    fn test_manual_selection_and_moving() {
+        let mut chess_engine = ChessEngine::new();
+
+        let mut from = Coords{ x: 7, y: 7 };
+        let mut to = Coords{ x: 7, y: 0 };
+
+        chess_engine.selected_piece = chess_engine.get_piece_option_with_coords(from.x, from.y);
+
+        chess_engine.force_move_selected_piece_with_coords(to.x, to.y);
+
+        assert_eq!(chess_engine.get_piece_option_with_coords(from.x, from.y), None);
+        assert_eq!(chess_engine.get_piece_option_with_coords(to.x, to.y), Some(Piece::new(
+            PieceTypes::Rook, Colors::White, to)));
+
+        let mut from = Coords{ x: 7, y: 0 };
+        let mut to = Coords{ x: 3, y: 3 };
+
+        chess_engine.selected_piece = chess_engine.get_piece_option_with_coords(from.x, from.y);
+
+
+        chess_engine.force_move_selected_piece_with_coords(to.x, to.y);
+
+        assert_eq!(chess_engine.get_piece_option_with_coords(from.x, from.y), None);
+        assert_eq!(chess_engine.get_piece_option_with_coords(to.x, to.y), Some(Piece::new(
+            PieceTypes::Rook, Colors::White, to)));
+
+        // chess_engine.print_board_with_ranks();
+        // println!("{:?}", chess_engine.get_piece_option_with_coords(from.x, from.y));
+        // println!("{:?}", chess_engine.get_piece_option_with_coords(to.x, to.y));
+        // println!("{:?}", chess_engine.selected_piece);
     }
 }
