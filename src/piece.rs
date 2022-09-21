@@ -6,8 +6,8 @@ use crate::coords::*;
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct Piece {
-    pub color: Colors,
     pub piece_type: PieceTypes,
+    pub color: Colors,
     pub notation: String,
     pub emoji: String,
     pub coords: Coords,
@@ -16,8 +16,8 @@ pub struct Piece {
 impl Piece {
     pub fn new(piece_type:PieceTypes, color:Colors, coords:Coords) -> Piece {
         Piece {
-            color,
             piece_type,
+            color,
             notation: Self::get_notation_string(&piece_type.clone()),
             emoji: Self::get_emoji_string(&piece_type.clone(), &color.clone()),
             coords,
