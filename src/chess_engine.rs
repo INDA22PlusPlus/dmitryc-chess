@@ -8,6 +8,7 @@ pub struct ChessEngine{
     pub board: Vec<Vec<Option<Piece>>>,
     size: Size,
     selected_piece: Option<Piece>,
+    turn: Colors,
 }
 
 impl ChessEngine {
@@ -31,6 +32,7 @@ impl ChessEngine {
             size: temp_size,
             board: temp_board,
             selected_piece: None,
+            turn: Colors::White,
         }
     }
 
@@ -41,6 +43,7 @@ impl ChessEngine {
             board: vec![vec![None; *&temp_size.w as usize];
                         *&temp_size.h as usize],
             selected_piece: None,
+            turn: Colors::White,
         }
     }
 
@@ -144,7 +147,13 @@ impl ChessEngine {
         println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
     }
 
+    pub fn select_piece_with_coords(&mut self, x:usize, y:usize){
+        self.selected_piece = self.get_piece_option_with_coords(x, y);
+    }
+
     // TODO: Fix scuffed moving of elements from one vec position to another
+    /// Force moves by internal coordinates INDEPENDENT of turn turn to any square.
+    /// Moves with structs named 'from' (Coords) and 'to' (Coords)
     pub fn force_move_piece_with_coords(&mut self, from: Coords, to:Coords) {
         if self.board[from.y][from.x].is_some(){
             // TODO: Fix creating of new object instead of moving existing
@@ -164,6 +173,8 @@ impl ChessEngine {
         self.board[y][x].clone()
     }
 
+    /// Force moves selected piece by internal coordinates INDEPENDENT of turn to any square.
+    /// Moves to given x (usize) and y (usize).
     pub fn force_move_selected_piece_with_coords(&mut self, x:usize, y:usize) {
         if self.selected_piece.is_some(){
             self.force_move_piece_with_coords(
@@ -171,6 +182,22 @@ impl ChessEngine {
                 Coords{x, y}
             );
             self.selected_piece = None;
+        }
+    }
+
+    /// Force plays by internal coordinates DEPENDENT of turn turn to any square.
+    /// Moves with structs named 'from' (Coords) and 'to' (Coords)
+    pub fn force_play_with_coords(&mut self, from: Coords, to:Coords){
+        if self.board[from.y][from.x].is_some() {
+            if self.board[from.y][from.x].as_ref().unwrap().color == self.turn {
+                self.force_move_piece_with_coords(from, to);
+
+                // TODO: Should be fixed
+                match self.turn {
+                    Colors::White => self.turn = Colors::Black,
+                    Colors::Black => self.turn = Colors::White,
+                }
+            }
         }
     }
 }
@@ -284,6 +311,58 @@ mod tests {
         chess_engine.print_board_with_ranks();
     }
 
+    #[test]
+    #[should_panic]
+    fn test_exceeding_coords_from() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.force_move_piece_with_coords(
+            Coords::new(8, 8),
+            Coords::new(7,7)
+        );
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_exceeding_coords_to() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.force_move_piece_with_coords(
+            Coords::new(3, 3),
+            Coords::new(8,8)
+        );
+    }
+
+    #[test]
+    fn test_get_piece() {
+        let mut chess_engine = ChessEngine::new();
+
+        // println!("{}", ChessEngine::get_piece_string_from_option(&chess_engine.get_piece_with_coords(7, 7)));
+
+        assert_eq!(chess_engine.get_piece_option_with_coords(7, 7), chess_engine.board[7][7].clone());
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_get_piece_exceeding_coords() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.get_piece_option_with_coords(8, 8);
+    }
+
+    #[test]
+    fn test_get_piece_string() {
+        let mut chess_engine = ChessEngine::new();
+
+        let piece_string = ChessEngine::get_piece_string_from_option(
+            &chess_engine.get_piece_option_with_coords(7, 7)
+        );
+
+        println!("{}", piece_string);
+
+        assert_eq!(piece_string, "♖ ");
+    }
+
     // TODO: DEFINITELY FIX THE RETURN VALUE PROBLEM I HATE THIS
     fn chess_engine_move_piece_from_to_assert(mut chess_engine:
                                               ChessEngine,
@@ -346,7 +425,6 @@ mod tests {
 
     }
 
-    //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
     fn test_empty_move_to_empty_square() {
         let mut chess_engine = ChessEngine::new();
@@ -359,7 +437,6 @@ mod tests {
 
     }
 
-    //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
     fn test_empty_move_to_occupied_square() {
         let mut chess_engine = ChessEngine::new();
@@ -372,76 +449,27 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
-    fn test_exceeding_coords_from() {
+    fn test_selection() {
         let mut chess_engine = ChessEngine::new();
 
-        chess_engine.force_move_piece_with_coords(
-            Coords::new(8, 8),
-            Coords::new(7,7)
-        );
-    }
+        let coords = Coords{ x: 7, y: 7 };
 
-    #[test]
-    #[should_panic]
-    fn test_exceeding_coords_to() {
-        let mut chess_engine = ChessEngine::new();
-
-        chess_engine.force_move_piece_with_coords(
-            Coords::new(3, 3),
-            Coords::new(8,8)
-        );
-    }
-
-    #[test]
-    fn test_get_piece() {
-        let mut chess_engine = ChessEngine::new();
-
-        // println!("{}", ChessEngine::get_piece_string_from_option(&chess_engine.get_piece_with_coords(7, 7)));
-
-        assert_eq!(chess_engine.get_piece_option_with_coords(7, 7), chess_engine.board[7][7].clone());
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_get_piece_exceeding_coords() {
-        let mut chess_engine = ChessEngine::new();
-
-        chess_engine.get_piece_option_with_coords(8, 8);
-    }
-
-    #[test]
-    fn test_manual_selection() {
-        let mut chess_engine = ChessEngine::new();
-
-        chess_engine.selected_piece = chess_engine.get_piece_option_with_coords(7, 7);
+        chess_engine.select_piece_with_coords(coords.x, coords.y);
 
         // println!("{}", ChessEngine::get_piece_string_from_option(&chess_engine.selected_piece));
 
-        assert_eq!(chess_engine.selected_piece, chess_engine.get_piece_option_with_coords(7, 7));
+        assert_eq!(chess_engine.selected_piece,
+                   chess_engine.get_piece_option_with_coords(coords.x, coords.y));
     }
 
     #[test]
-    fn test_get_piece_string() {
-        let mut chess_engine = ChessEngine::new();
-
-        let piece_string = ChessEngine::get_piece_string_from_option(
-            &chess_engine.get_piece_option_with_coords(7, 7)
-        );
-
-        println!("{}", piece_string);
-
-        assert_eq!(piece_string, "♖ ");
-    }
-
-    #[test]
-    fn test_manual_selection_and_moving() {
+    fn test_selection_and_moving() {
         let mut chess_engine = ChessEngine::new();
 
         let mut from = Coords{ x: 7, y: 7 };
         let mut to = Coords{ x: 7, y: 0 };
 
-        chess_engine.selected_piece = chess_engine.get_piece_option_with_coords(from.x, from.y);
+        chess_engine.select_piece_with_coords(from.x, from.y);
 
         chess_engine.force_move_selected_piece_with_coords(to.x, to.y);
 
@@ -452,8 +480,7 @@ mod tests {
         let mut from = Coords{ x: 7, y: 0 };
         let mut to = Coords{ x: 3, y: 3 };
 
-        chess_engine.selected_piece = chess_engine.get_piece_option_with_coords(from.x, from.y);
-
+        chess_engine.select_piece_with_coords(from.x, from.y);
 
         chess_engine.force_move_selected_piece_with_coords(to.x, to.y);
 
@@ -466,4 +493,14 @@ mod tests {
         // println!("{:?}", chess_engine.get_piece_option_with_coords(to.x, to.y));
         // println!("{:?}", chess_engine.selected_piece);
     }
+
+    // #[test]
+    // fn test_force_play_one_move() {
+    //     let mut chess_engine = ChessEngine::new();
+    //
+    //     let mut from = Coords{ x: 7, y: 7 };
+    //     let mut to = Coords{ x: 7, y: 0 };
+    //
+    //     chess_engine.force_play_with_coords()
+    // }
 }
