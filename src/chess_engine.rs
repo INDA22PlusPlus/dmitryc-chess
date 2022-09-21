@@ -105,7 +105,7 @@ impl ChessEngine {
         temp_engine
     }
 
-    fn get_piece_string_from_option(square: &Option<Piece>) -> String {
+    pub fn get_piece_string_from_option(square: &Option<Piece>) -> String {
         if square.is_some() {square.as_ref().unwrap().emoji.to_string()} else {"  ".to_string()}
     }
 
@@ -153,6 +153,13 @@ impl ChessEngine {
 
     pub fn get_piece_with_coords(&self, x:usize, y:usize) -> Option<Piece> {
         self.board[y][x].clone()
+    }
+
+    pub fn force_move_selected_piece_with_coords(&mut self, to:Coords) {
+        if self.selected_piece.is_some(){
+            self.force_move_piece_with_coords(self.selected_piece.as_ref().unwrap().coords, to);
+
+        }
     }
 }
 
