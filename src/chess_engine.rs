@@ -6,6 +6,7 @@ use crate::piece::*;
 pub struct ChessEngine{
     pub board: Vec<Vec<Option<Piece>>>,
     size: Size,
+    selected_piece: Option<Piece>,
 }
 
 impl ChessEngine {
@@ -28,6 +29,7 @@ impl ChessEngine {
         ChessEngine {
             size: temp_size,
             board: temp_board,
+            selected_piece: None,
         }
     }
 
@@ -37,6 +39,7 @@ impl ChessEngine {
             size: temp_size,
             board: vec![vec![None; *&temp_size.w as usize];
                         *&temp_size.h as usize],
+            selected_piece: None,
         }
     }
 

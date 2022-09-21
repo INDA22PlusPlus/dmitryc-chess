@@ -41,19 +41,19 @@ mod tests {
     #[test]
     #[should_panic]
     fn assign_zeros_size() {
-        let s = Size::new(0, 0);
+        Size::new(0, 0);
     }
 
     #[test]
     #[should_panic]
     fn assign_zero_width_size() {
-        let s = Size::new(0, 1);
+        Size::new(0, 1);
     }
 
     #[test]
     #[should_panic]
     fn assign_zero_height_size() {
-        let s = Size::new(1, 0);
+         Size::new(1, 0);
     }
 
     #[test]
@@ -88,7 +88,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn assign_over_8_size() {
-        let s = Size::new(100, 100);
+        Size::new(100, 100);
     }
 
     #[test]
@@ -130,7 +130,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn assign_over_7_coords() {
-        let c = Coords::new(8, 8);
+        Coords::new(8, 8);
     }
 
 }
