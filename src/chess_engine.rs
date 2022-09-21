@@ -408,8 +408,8 @@ mod tests {
 
         chess_engine_move_piece_from_to_assert(
             chess_engine,
-            Coords{ x: 7, y: 7 },
-            Coords { x: 3, y: 3 }
+            Coords::new(7, 7),
+            Coords::new( 3, 3)
         );
     }
 
@@ -419,14 +419,14 @@ mod tests {
 
         chess_engine = chess_engine_move_piece_from_to_assert(
             chess_engine,
-            Coords{ x: 7, y: 7 },
-            Coords { x: 7, y: 0 }
+            Coords::new(7, 7),
+            Coords::new(7, 0)
         );
 
         chess_engine = chess_engine_move_piece_from_to_assert(
             chess_engine,
-            Coords{ x: 7, y: 0 },
-            Coords { x: 3, y: 3 }
+            Coords::new(7, 0),
+            Coords::new(3, 3)
         );
 
         // chess_engine.print_board_with_ranks();
@@ -439,8 +439,8 @@ mod tests {
 
         chess_engine = chess_engine_move_piece_from_to_assert(
             chess_engine,
-            Coords{ x: 3, y: 3 },
-            Coords { x: 4, y: 4 }
+            Coords::new(3, 3),
+            Coords::new( 4, 4)
         );
 
     }
@@ -451,16 +451,16 @@ mod tests {
 
         chess_engine = chess_engine_move_piece_from_to_assert(
             chess_engine,
-            Coords{ x: 3, y: 3 },
-            Coords { x: 7, y: 7 }
+            Coords::new(3, 3),
+            Coords::new( 7, 7)
         );
     }
 
     #[test]
-    fn test_selection() {
+    fn test_force_selection() {
         let mut chess_engine = ChessEngine::new();
 
-        let coords = Coords{ x: 7, y: 7 };
+        let coords = Coords::new(7, 7);
 
         chess_engine.force_select_piece_with_coords(coords.x, coords.y);
 
@@ -471,11 +471,11 @@ mod tests {
     }
 
     #[test]
-    fn test_selection_and_moving() {
+    fn test_force_selection_and_moving() {
         let mut chess_engine = ChessEngine::new();
 
-        let mut from = Coords{ x: 7, y: 7 };
-        let mut to = Coords{ x: 7, y: 0 };
+        let mut from = Coords::new(7, 7);
+        let mut to = Coords::new(7, 0);
 
         chess_engine.force_select_piece_with_coords(from.x, from.y);
 
@@ -485,8 +485,8 @@ mod tests {
         assert_eq!(chess_engine.get_piece_option_with_coords(to.x, to.y), Some(Piece::new(
             PieceTypes::Rook, Colors::White, to)));
 
-        let mut from = Coords{ x: 7, y: 0 };
-        let mut to = Coords{ x: 3, y: 3 };
+        let mut from = Coords::new(7, 0);
+        let mut to = Coords::new(3, 3);
 
         chess_engine.force_select_piece_with_coords(from.x, from.y);
 
@@ -506,8 +506,8 @@ mod tests {
     fn test_force_play_to_empty_one_move() {
         let mut chess_engine = ChessEngine::new();
 
-        let mut from = Coords{ x: 7, y: 7 };
-        let mut to = Coords{ x: 7, y: 3 };
+        let mut from = Coords::new(7, 7);
+        let mut to = Coords::new(7, 3);
 
         // chess_engine.print_board_with_ranks();
 
@@ -525,8 +525,8 @@ mod tests {
     fn test_force_play_to_empty_one_move_wrong_turn() {
         let mut chess_engine = ChessEngine::new();
 
-        let mut from = Coords{ x: 7, y: 0 };
-        let mut to = Coords{ x: 7, y: 3 };
+        let mut from = Coords::new(7, 0);
+        let mut to = Coords::new(7, 3);
 
         // chess_engine.print_board_with_ranks();
 
@@ -543,8 +543,8 @@ mod tests {
     fn test_force_play_to_occupied_one_move() {
         let mut chess_engine = ChessEngine::new();
 
-        let mut from = Coords{ x: 7, y: 7 };
-        let mut to = Coords{ x: 7, y: 0 };
+        let mut from = Coords::new(7, 7);
+        let mut to = Coords::new(7, 0);
 
         // chess_engine.print_board_with_ranks();
 
@@ -562,8 +562,8 @@ mod tests {
     fn test_force_play_to_occupied_one_move_wrong_turn() {
         let mut chess_engine = ChessEngine::new();
 
-        let mut from = Coords{ x: 7, y: 0 };
-        let mut to = Coords{ x: 7, y: 7 };
+        let mut from = Coords::new(7, 0);
+        let mut to = Coords::new(7, 7);
 
         // chess_engine.print_board_with_ranks();
 
@@ -581,8 +581,8 @@ mod tests {
     fn test_force_play_two_moves() {
         let mut chess_engine = ChessEngine::new();
 
-        let mut from = Coords{ x: 7, y: 7 };
-        let mut to = Coords{ x: 7, y: 0 };
+        let mut from = Coords::new(7, 7);
+        let mut to = Coords::new(7, 0);
 
         // chess_engine.print_board_with_ranks();
 
@@ -595,8 +595,8 @@ mod tests {
 
         // chess_engine.print_board_with_ranks();
 
-        let mut from = Coords{ x: 0, y: 0 };
-        let mut to = Coords{ x: 0, y: 7 };
+        let mut from = Coords::new(0, 0);
+        let mut to = Coords::new(0, 7);
 
         chess_engine.force_play_with_coords(from, to);
 
@@ -613,8 +613,8 @@ mod tests {
     fn test_force_play_two_moves_wrong_turn() {
         let mut chess_engine = ChessEngine::new();
 
-        let mut from = Coords{ x: 7, y: 7 };
-        let mut to = Coords{ x: 7, y: 0 };
+        let mut from = Coords::new(7, 7);
+        let mut to = Coords::new(7, 0);
 
         // chess_engine.print_board_with_ranks();
 
@@ -627,8 +627,8 @@ mod tests {
 
         // chess_engine.print_board_with_ranks();
 
-        let mut from = Coords{ x: 7, y: 0 };
-        let mut to = Coords{ x: 7, y: 7 };
+        let mut from = Coords::new(7, 0);
+        let mut to = Coords::new(7, 7);
 
         chess_engine.force_play_with_coords(from, to);
 
@@ -638,5 +638,17 @@ mod tests {
             PieceTypes::Rook, Colors::White, from)));
         assert_eq!(chess_engine.get_piece_option_with_coords(to.x, to.y), None);
         assert_eq!(chess_engine.turn, Colors::Black);
+    }
+
+    #[test]
+    fn test_selection_with_coords() {
+        let mut chess_engine = ChessEngine::new();
+
+        let coords = Coords::new(7, 7);
+
+        chess_engine.select_piece_with_coords(coords.x, coords.y);
+
+        assert_eq!(chess_engine.get_piece_option_with_coords(coords.x, coords.y),
+                   chess_engine.selected_piece);
     }
 }
