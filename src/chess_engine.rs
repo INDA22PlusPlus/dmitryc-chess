@@ -138,9 +138,9 @@ impl ChessEngine {
 
     // TODO: Fix scuffed moving of elements from one vec position to another
     pub fn force_move_piece_with_coords(&mut self, from: Coords, to:Coords) {
-        if self.board[from.x][from.y].is_some(){
-            self.board[to.x][to.y] = self.board[from.x][from.y].clone();
-            self.board[from.x][from.y] = None;
+        if self.board[from.y][from.x].is_some(){
+            self.board[to.y][to.x] = self.board[from.x][from.y].clone();
+            self.board[from.y][from.x] = None;
         }
     }
 
@@ -150,16 +150,17 @@ impl ChessEngine {
 mod tests {
     use super::*;
 
-    struct TestContents {
-        chess_engine: ChessEngine,
-    }
+    // struct TestContents {
+    //     chess_engine: ChessEngine,
+    // }
+    //
+    // fn setup() -> TestContents {
+    //     TestContents {
+    //         chess_engine: ChessEngine::new(),
+    //     }
+    // }
 
-    fn setup() -> TestContents {
-        TestContents {
-            chess_engine: ChessEngine::new(),
-        }
-    }
-
+    //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
     fn print_empty_board() {
         let chess_engine = ChessEngine::create_engine_with_empty_board();
@@ -168,6 +169,7 @@ mod tests {
 
     }
 
+    //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
     fn print_filled_board() {
         let chess_engine = ChessEngine::create_engine_with_white_board();
@@ -175,6 +177,7 @@ mod tests {
         chess_engine.print_board();
     }
 
+    //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
     fn print_empty_board_with_ranks() {
         let chess_engine = ChessEngine::create_engine_with_empty_board();
@@ -183,6 +186,7 @@ mod tests {
 
     }
 
+    //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
     fn print_filled_board_with_ranks() {
         let chess_engine = ChessEngine::create_engine_with_white_board();
@@ -190,6 +194,7 @@ mod tests {
         chess_engine.print_board_with_ranks();
     }
 
+    //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
     fn print_standard_board() {
         let chess_engine = ChessEngine::new();
@@ -198,6 +203,7 @@ mod tests {
 
     }
 
+    //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
     fn print_standard_board_with_ranks() {
         let chess_engine = ChessEngine::new();
@@ -205,6 +211,7 @@ mod tests {
         chess_engine.print_board_with_ranks();
     }
 
+    //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
     fn test_piece_move_to_empty_square() {
         let mut chess_engine = ChessEngine::new();
@@ -219,8 +226,31 @@ mod tests {
         chess_engine.print_board_with_ranks();
     }
 
+    //TODO: Need to fix tests to compare to board states (or worst case strings)
     #[test]
-    fn test_none_move_to_empty_square() {
+    fn test_piece_move_to_occupied_square() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.print_board_with_ranks();
+
+        chess_engine.force_move_piece_with_coords(
+            Coords::new(7, 7),
+            Coords::new(7,0)
+        );
+
+        chess_engine.print_board_with_ranks();
+
+        chess_engine.force_move_piece_with_coords(
+            Coords::new(7, 0),
+            Coords::new(7,3)
+        );
+
+        chess_engine.print_board_with_ranks();
+    }
+
+    //TODO: Need to fix tests to compare to board states (or worst case strings)
+    #[test]
+    fn test_empty_move_to_empty_square() {
         let mut chess_engine = ChessEngine::new();
 
         chess_engine.print_board_with_ranks();
@@ -232,4 +262,42 @@ mod tests {
 
         chess_engine.print_board_with_ranks();
     }
+
+    //TODO: Need to fix tests to compare to board states (or worst case strings)
+    #[test]
+    fn test_empty_move_to_occupied_square() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.print_board_with_ranks();
+
+        chess_engine.force_move_piece_with_coords(
+            Coords::new(3, 3),
+            Coords::new(7,7)
+        );
+
+        chess_engine.print_board_with_ranks();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_exceeding_coords_from() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.force_move_piece_with_coords(
+            Coords::new(8, 8),
+            Coords::new(7,7)
+        );
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_exceeding_coords_to() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.force_move_piece_with_coords(
+            Coords::new(3, 3),
+            Coords::new(8,8)
+        );
+    }
+
 }
