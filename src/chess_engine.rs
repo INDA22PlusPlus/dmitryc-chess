@@ -522,6 +522,41 @@ impl ChessEngine {
         self.force_play_selected_piece_with_coords(coords.x, coords.y);
     }
 
+
+
+
+    /// Plays (following rules) by algebraic notation (chess notation) DEPENDENT of turn to any square.
+    /// Moves variables named 'from' (&str) and 'to' (&str)
+    pub fn play_with_notation(&mut self, from: &str, to:&str){
+        let from_coords = self.get_coords_from_notation(from);
+        let to_coords = self.get_coords_from_notation(to);
+
+        let piece = self.get_piece_option_with_coords(from_coords.x, from_coords.y);
+
+        if piece.is_some(){
+            if piece.unwrap().get_all_legal_moves(self.board.clone()).contains(&to_coords) {
+                self.force_play_with_coords(from_coords, to_coords);
+            }
+        }
+    }
+
+    /// Plays (following rules) selected piece algebraic notation (chess notation) coordinates
+    /// DEPENDENT of turn to any square.
+    pub fn play_selected_piece_with_notation(&mut self, square: &str){
+        if self.selected_piece.is_some(){
+            let piece = self.selected_piece.as_ref().unwrap().clone();
+            let coords = self.get_coords_from_notation(square);
+
+            if piece.get_all_legal_moves(self.board.clone()).contains(&coords) {
+                self.force_play_selected_piece_with_coords(coords.x, coords.y);
+            }
+        }
+    }
+
+
+
+
+
     pub fn add_piece_with_coords(&mut self, coords: Coords, piece_option: Option<Piece>) {
         self.board[coords.y][coords.x] = piece_option;
     }
@@ -1633,7 +1668,6 @@ mod tests {
 
     #[test]
     #[should_panic]
-
     fn test_add_piece_with_notation() {
         let mut chess_engine = ChessEngine::new();
 
@@ -1653,5 +1687,158 @@ mod tests {
                        chess_engine.get_coords_from_notation(square))));
 
         // chess_engine.print_board_with_ranks_and_files()
+    }
+
+    fn test_play_with_notation_prepare(mut chess_engine: ChessEngine) -> ChessEngine {
+        let square = "e3";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "f4";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "g2";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Knight,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        chess_engine
+    }
+
+    // TODO: Real tests, not only prints
+    #[test]
+    fn test_play_with_notation_move_to_empty_valid() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        chess_engine = test_play_with_notation_prepare(chess_engine);
+
+        chess_engine.play_with_notation("g2", "e1");
+
+        assert_eq!(chess_engine.turn, Colors::Black);
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+    }
+
+    #[test]
+    fn test_play_with_notation_move_to_opposite_piece_valid() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        chess_engine = test_play_with_notation_prepare(chess_engine);
+
+        chess_engine.play_with_notation("g2", "f4");
+
+        assert_eq!(chess_engine.turn, Colors::Black);
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+    }
+
+    #[test]
+    fn test_play_with_notation_move_to_empty_not_valid() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        chess_engine = test_play_with_notation_prepare(chess_engine);
+
+        chess_engine.play_with_notation("g2", "e2");
+
+        assert_eq!(chess_engine.turn, Colors::White);
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+    }
+
+    #[test]
+    fn test_play_with_notation_move_to_own_piece_not_valid() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        chess_engine = test_play_with_notation_prepare(chess_engine);
+
+        chess_engine.play_with_notation("g2", "e3");
+
+        assert_eq!(chess_engine.turn, Colors::White);
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+    }
+
+    #[test]
+    fn test_play_with_notation_move_twice_wrong_turn() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        chess_engine = test_play_with_notation_prepare(chess_engine);
+
+        chess_engine.play_with_notation("g2", "f4");
+
+        assert_eq!(chess_engine.turn, Colors::Black);
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        chess_engine.play_with_notation("f4", "d3");
+
+        assert_eq!(chess_engine.turn, Colors::Black);
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        // chess_engine.play_with_notation("e3", "e2");
+        //
+        // assert_eq!(chess_engine.turn, Colors::Black);
+        //
+        // chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+    }
+
+    #[test]
+    fn test_play_selected_with_notation_move_to_empty_valid_and_wrong_turn() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        chess_engine = test_play_with_notation_prepare(chess_engine);
+
+        chess_engine.select_piece_notation("g2");
+
+        chess_engine.play_selected_piece_with_notation("e1");
+
+        assert_eq!(chess_engine.turn, Colors::Black);
+        assert_eq!(chess_engine.selected_piece, None);
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        chess_engine.select_piece_notation("e1");
+
+        chess_engine.play_selected_piece_with_notation("d3");
+
+        assert_eq!(chess_engine.turn, Colors::Black);
+        assert_eq!(chess_engine.selected_piece, None);
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+    }
+
+    #[test]
+    fn test_play_selected_with_notation_move_to_opposite_piece_valid() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        chess_engine = test_play_with_notation_prepare(chess_engine);
+
+        chess_engine.select_piece_notation("g2");
+
+        chess_engine.play_selected_piece_with_notation("f4");
+
+        assert_eq!(chess_engine.turn, Colors::Black);
+        assert_eq!(chess_engine.selected_piece, None);
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
     }
 }
