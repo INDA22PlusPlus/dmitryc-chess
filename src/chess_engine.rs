@@ -1,8 +1,10 @@
+use std::collections::{HashMap, HashSet};
 use std::iter::zip;
 use crate::coords::*;
 use crate::colors::*;
 use crate::piece_types::*;
 use crate::piece::*;
+use colored::Colorize;
 
 #[derive(Clone)]
 pub struct ChessEngine{
@@ -144,6 +146,46 @@ impl ChessEngine {
         println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
     }
 
+    pub fn print_board_with_ranks_and_files_and_moves(&self) {
+        let moves = self.get_moves();
+
+        print!("  ");
+        for letter in b'A'..=b'H'{
+            print!(" {} ", letter as char);
+        }
+        println!();
+
+        let mut numbered_rank = 8;
+        for (row, y) in zip(self.board.clone(), 0..=7) {
+            println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
+            print!("{} ", &numbered_rank);
+            for (square, x) in zip(row, 0..=7) {
+                let coords = Coords::new(x, y);
+                let mut square_str = &*Self::get_piece_string_from_option(&square);
+                if moves.contains(&coords){
+                    print!("|{}", square_str.on_blue());
+                }
+                else {
+                    print!("|{}", square_str);    // TODO Figure out the right way to do this
+                }
+            }
+            println!("|");
+
+            numbered_rank -= 1;
+        }
+        // self.board.iter().for_each(|row| {
+        //     println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
+        //     print!("{} ", &numbered_rank);
+        //     row.iter().for_each(|square| {
+        //         print!("|{}", Self::get_piece_string_from_option(square));    // TODO Figure out the right way to do this
+        //     });
+        //     println!("|");
+        //
+        //     numbered_rank -= 1;
+        // });
+        // println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
+    }
+
     pub fn get_piece_string_from_option(square: &Option<Piece>) -> String {
         if square.is_some() {square.as_ref().unwrap().emoji.to_string()} else {"  ".to_string()}
     }
@@ -177,13 +219,18 @@ impl ChessEngine {
     pub fn force_move_piece_with_coords(&mut self, from: Coords, to:Coords) {
         if self.board[from.y][from.x].is_some(){
             // TODO: Fix creating of new object instead of moving existing
-            self.board[to.y][to.x] = Some(Piece::new(
+            // self.board[to.y][to.x] = Some(Piece::new(
+            //     self.board[from.y][from.x].as_ref().unwrap().piece_type,
+            //     self.board[from.y][from.x].as_ref().unwrap().color,
+            //     to));
+
+            self.add_piece_with_coords(to, Some(Piece::new(
                 self.board[from.y][from.x].as_ref().unwrap().piece_type,
                 self.board[from.y][from.x].as_ref().unwrap().color,
-                to));
+                to)));
 
             // self.board[to.y][to.x] = self.board[from.y][from.x].clone();
-            // self.board[to.y][to.x].unwrap().set_coords(to);              \\ How to fix?
+            // self.board[to.y][to.x].unwrap().coords.x = 0;             // How to fix?
 
             self.board[from.y][from.x] = None;
         }
@@ -293,7 +340,6 @@ impl ChessEngine {
         self.get_piece_option_with_coords(coords.x, coords.y)
     }
 
-
     /// Force moves by algebraic notation (chess notation) INDEPENDENT of turn turn to any square.
     /// Moves with structs named 'from' (&str) and 'to' (&str)
     pub fn force_move_piece_with_notation(&mut self, from: &str, to:&str) {
@@ -326,6 +372,31 @@ impl ChessEngine {
         let coords = self.get_coords_from_notation(square);
 
         self.force_play_selected_piece_with_coords(coords.x, coords.y);
+    }
+
+    pub fn add_piece_with_coords(&mut self, coords: Coords, piece_option: Option<Piece>) {
+        self.board[coords.y][coords.x] = piece_option;
+    }
+
+    pub fn add_piece_with_notation(&mut self, square: &str, piece_option: Option<Piece>) {
+        let coords = self.get_coords_from_notation(square);
+        self.board[coords.y][coords.x] = piece_option;
+    }
+
+    fn get_moves(&self) -> HashSet<Coords> {
+        let mut moves = HashSet::new();
+
+        for row in self.board.clone() {
+            for square in row {
+                if square.is_some() {
+                    for piece_move in square.unwrap().get_moves(self.board.clone()){
+                        moves.insert(piece_move);
+                    }
+                }
+            }
+        }
+
+        moves
     }
 }
 
@@ -1303,5 +1374,72 @@ mod tests {
                                    chess_engine.get_coords_from_notation(to))
                    )
         );
+    }
+
+    #[test]
+    fn test_add_piece_with_coords() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.add_piece_with_coords(Coords::new(3,3),
+                                           Some(Piece::new(
+                                               PieceTypes::Knight,
+                                               Colors::White,
+                                               Coords::new(3, 3)
+                                           )));
+
+        assert_eq!(chess_engine.get_piece_option_with_coords(3, 3),
+                   Some(Piece::new(
+                       PieceTypes::Knight,
+                       Colors::White,
+                       Coords::new(3, 3))));
+
+        // chess_engine.print_board_with_ranks_and_files()
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_add_piece_with_coords_wrong_square() {
+        let mut chess_engine = ChessEngine::new();
+
+        let coords = Coords::new(8,8);
+
+        chess_engine.add_piece_with_coords(coords,
+                                           Some(Piece::new(
+                                               PieceTypes::Knight,
+                                               Colors::White,
+                                               coords
+                                           )));
+
+        assert_eq!(chess_engine.get_piece_option_with_coords(coords.x, coords.y),
+                   Some(Piece::new(
+                       PieceTypes::Knight,
+                       Colors::White,
+                       coords)));
+
+        // chess_engine.print_board_with_ranks_and_files()
+    }
+
+    #[test]
+    #[should_panic]
+
+    fn test_add_piece_with_notation() {
+        let mut chess_engine = ChessEngine::new();
+
+        let square = "f9";
+
+        chess_engine.add_piece_with_notation(square,
+                                           Some(Piece::new(
+                                               PieceTypes::Knight,
+                                               Colors::White,
+                                               chess_engine.get_coords_from_notation(square)
+                                           )));
+
+        assert_eq!(chess_engine.get_piece_option_with_notation(square),
+                   Some(Piece::new(
+                       PieceTypes::Knight,
+                       Colors::White,
+                       chess_engine.get_coords_from_notation(square))));
+
+        // chess_engine.print_board_with_ranks_and_files()
     }
 }

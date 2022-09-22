@@ -99,7 +99,56 @@ impl Piece {
         coords
     }
 
-    pub fn get_all_legal_moves(board: Vec<Vec<Option<Piece>>>) -> Vec<Coords>{
+    pub fn get_all_legal_moves(board: Vec<Vec<Option<Piece>>>) -> Vec<Coords> {
+        let mut white_pieces = Self::get_coords_from_board(board.clone(),
+                                                           Colors::White);
+        let mut black_pieces = Self::get_coords_from_board(board.clone(),
+                                                           Colors::Black);
+        let mut legal_moves = vec![];
+
+        // println!("{:?}", white_pieces);
+        // println!("{:?}", black_pieces);
+
+        legal_moves
+    }
+
+    pub fn get_moves(&self, board: Vec<Vec<Option<Piece>>>) -> Vec<Coords> {
+        let mut white_pieces = Self::get_coords_from_board(board.clone(),
+                                                           Colors::White);
+        let mut black_pieces = Self::get_coords_from_board(board.clone(),
+                                                           Colors::Black);
+        let mut legal_moves = vec![];
+
+        // println!("{:?}", white_pieces);
+        // println!("{:?}", black_pieces);
+
+        match self.piece_type {
+            PieceTypes::Pawn => {
+
+            }
+            PieceTypes::Knight => {
+                legal_moves = self.get_knight_moves(white_pieces, black_pieces)
+            }
+            PieceTypes::Bishop => {
+
+            }
+            PieceTypes::Rook => {
+
+            }
+            PieceTypes::Queen => {
+
+            }
+            PieceTypes::King => {
+
+            }
+            // _ => {panic!("Not implemented PieceType!")}
+        }
+
+
+        legal_moves
+    }
+
+    pub fn get_special_moves(board: Vec<Vec<Option<Piece>>>) -> Vec<Coords> {
         let mut white_pieces = Self::get_coords_from_board(board.clone(),
                                                            Colors::White);
         let mut black_pieces = Self::get_coords_from_board(board.clone(),
@@ -110,6 +159,62 @@ impl Piece {
         println!("{:?}", black_pieces);
 
         legal_moves
+    }
+
+    pub fn get_attacked_squares(board: Vec<Vec<Option<Piece>>>) -> Vec<Coords> {
+        let mut white_pieces = Self::get_coords_from_board(board.clone(),
+                                                           Colors::White);
+        let mut black_pieces = Self::get_coords_from_board(board.clone(),
+                                                           Colors::Black);
+        let mut legal_moves = vec![];
+
+        // println!("{:?}", white_pieces);
+        // println!("{:?}", black_pieces);
+
+        legal_moves
+    }
+
+    pub fn get_attacked_pieces_squares(board: Vec<Vec<Option<Piece>>>) -> Vec<Coords> {
+        let mut white_pieces = Self::get_coords_from_board(board.clone(),
+                                                           Colors::White);
+        let mut black_pieces = Self::get_coords_from_board(board.clone(),
+                                                           Colors::Black);
+        let mut legal_moves = vec![];
+
+        // println!("{:?}", white_pieces);
+        // println!("{:?}", black_pieces);
+
+        legal_moves
+    }
+
+    // Moves by piece type:
+
+    // Knight Moves -------------------------------------------------
+
+    fn get_knight_moves(&self, white_pieces: Vec<Coords>, black_pieces: Vec<Coords>) -> Vec<Coords> {
+        let rel_moves = vec![
+            RelCoords::new(2, 1),
+            RelCoords::new(2, -1),
+            RelCoords::new(-2, 1),
+            RelCoords::new(-2, -1),
+            RelCoords::new(1, 2),
+            RelCoords::new(1, -2),
+            RelCoords::new(-1, 2),
+            RelCoords::new(-1, -2),
+        ];
+
+        let mut moves = vec![];
+
+        for rel_move in rel_moves.clone() {
+            // println!("{:?}", Coords::coords_and_rel_coords_result(self.coords, rel_move));
+            if Coords::check_within_coords(self.coords, rel_move){
+                moves.push(Coords::coords_and_rel_coords_result(self.coords, rel_move));
+            }
+        }
+
+        // println!("{:?}", moves);
+
+        moves
     }
 }
 
@@ -166,12 +271,115 @@ mod tests {
     #[test]
     fn test_get_coords_from_board_one_piece() {
         let mut chess_engine = ChessEngine::create_engine_with_empty_board();
-        chess_engine.board[3][3] = Some(Piece::new(PieceTypes::Knight,
-                                                   Colors::White,
-                                                   Coords::new(3, 3)));
+
+        let square = "d5";
+
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Knight,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
         let white_pieces = Piece::get_coords_from_board(chess_engine.board,
                                                         Colors::White);
 
         assert_eq!(white_pieces, vec![Coords::new(3, 3)]);
+    }
+
+    #[test]
+    fn test_get_all_legal_moves() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        let square = "d5";
+
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Knight,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let pieces = Piece::get_all_legal_moves(chess_engine.board);
+
+        // println!("{:?}", pieces)
+    }
+
+    #[test]
+    fn test_get_moves() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        let square = "d5";
+
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Knight,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        // let square = "e5";
+        //
+        // chess_engine.add_piece_with_notation(square, Some(Piece::new(
+        //     PieceTypes::Knight,
+        //     Colors::White,
+        //     chess_engine.get_coords_from_notation(square))
+        // ));
+
+        let pieces = chess_engine
+            .get_piece_option_with_notation(square)
+            .unwrap()
+            .get_moves(chess_engine.board.clone());
+
+        // println!("{:?}", pieces);
+        chess_engine.print_board_with_ranks_and_files_and_moves();
+    }
+
+    #[test]
+    fn test_get_special_moves() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        let square = "d5";
+
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Knight,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let pieces = Piece::get_special_moves(chess_engine.board);
+
+        // println!("{:?}", pieces)
+    }
+
+    #[test]
+    fn test_get_attacked_squares() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        let square = "d5";
+
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Knight,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let pieces = Piece::get_attacked_squares(chess_engine.board);
+
+        // println!("{:?}", pieces)
+    }
+
+    #[test]
+    fn get_attacked_pieces_squares() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        let square = "d5";
+
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Knight,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let pieces = Piece::get_attacked_pieces_squares(chess_engine.board);
+
+        // println!("{:?}", pieces)
     }
 }

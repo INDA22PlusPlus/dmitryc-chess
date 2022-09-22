@@ -57,6 +57,11 @@ impl Coords {
         (coords.x as isize + rel_coords.x > 0 && coords.x as isize + rel_coords.x <= 7) &&
             (coords.y as isize + rel_coords.y > 0 && coords.y as isize + rel_coords.y <= 7)
     }
+
+    pub fn coords_and_rel_coords_result(coords: Coords, rel_coords: RelCoords) -> Coords {
+        Coords::new((rel_coords.x + coords.x as isize) as usize,
+                    (rel_coords.y + coords.y as isize) as usize)
+    }
 }
 
 #[cfg(test)]
@@ -204,5 +209,12 @@ mod tests {
         let r = RelCoords::new(0, -1);
 
         assert_eq!(Coords::check_within_coords(c, r), false);
+    }
+
+    #[test]
+    fn test_coords_and_rel_coords_result() {
+        assert_eq!(Coords::new(3, 3), Coords::coords_and_rel_coords_result(
+            Coords::new(5, 4), RelCoords::new(-2, -1))
+        )
     }
 }
