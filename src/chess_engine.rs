@@ -1,3 +1,4 @@
+use std::iter::zip;
 use crate::coords::*;
 use crate::colors::*;
 use crate::piece_types::*;
@@ -122,7 +123,7 @@ impl ChessEngine {
     }
 
     // TODO: Horrible code, needs refactoring later
-    pub fn print_board_with_ranks(&self) {
+    pub fn print_board_with_ranks_and_files(&self) {
         print!("  ");
         for letter in b'A'..=b'H'{
             print!(" {} ", letter as char);
@@ -151,6 +152,11 @@ impl ChessEngine {
         self.board[y][x].clone()
     }
 
+    /// Deselects (Converts option to None) current selected piece
+    pub fn deselect(&mut self){
+        self.selected_piece = None;
+    }
+
     /// Selects piece INDEPENDENT of turn
     pub fn force_select_piece_with_coords(&mut self, x:usize, y:usize){
         self.selected_piece = self.get_piece_option_with_coords(x, y);
@@ -158,8 +164,10 @@ impl ChessEngine {
 
     /// Selects piece DEPENDENT of turn
     pub fn select_piece_with_coords(&mut self, x:usize, y:usize){
-        if self.turn == self.get_piece_option_with_coords(x, y).as_ref().unwrap().color{
-            self.selected_piece = self.get_piece_option_with_coords(x, y);
+        if self.get_piece_option_with_coords(x, y).is_some(){
+            if self.turn == self.get_piece_option_with_coords(x, y).as_ref().unwrap().color{
+                self.selected_piece = self.get_piece_option_with_coords(x, y);
+            }
         }
     }
 
@@ -224,6 +232,88 @@ impl ChessEngine {
             }
         }
     }
+
+    pub fn get_coords_from_notation(&mut self, square: &str){
+        let file = square.chars().next().expect("Wrong Format").to_lowercase();
+        let rank = square.chars().next().expect("Wrong Format").to_lowercase();
+
+        for (file_letter, file_x) in zip('a'..'h', 0..7){
+            println!("{} {}", file_letter, file_x);
+        };
+    }
+    // /// Selects piece INDEPENDENT of turn
+    // pub fn force_select_piece_with_notation(&mut self, square: &str){
+    //     self.selected_piece = self.get_piece_option_with_coords(x, y);
+    // }
+    //
+    // /// Selects piece DEPENDENT of turn
+    // pub fn select_piece_with_coords(&mut self, x:usize, y:usize){
+    //     if self.turn == self.get_piece_option_with_coords(x, y).as_ref().unwrap().color{
+    //         self.selected_piece = self.get_piece_option_with_coords(x, y);
+    //     }
+    // }
+    //
+    // // TODO: Fix scuffed moving of elements from one vec position to another
+    // /// Force moves by internal coordinates INDEPENDENT of turn turn to any square.
+    // /// Moves with structs named 'from' (Coords) and 'to' (Coords)
+    // pub fn force_move_piece_with_coords(&mut self, from: Coords, to:Coords) {
+    //     if self.board[from.y][from.x].is_some(){
+    //         // TODO: Fix creating of new object instead of moving existing
+    //         self.board[to.y][to.x] = Some(Piece::new(
+    //             self.board[from.y][from.x].as_ref().unwrap().piece_type,
+    //             self.board[from.y][from.x].as_ref().unwrap().color,
+    //             to));
+    //
+    //         // self.board[to.y][to.x] = self.board[from.y][from.x].clone();
+    //         // self.board[to.y][to.x].unwrap().set_coords(to);              \\ How to fix?
+    //
+    //         self.board[from.y][from.x] = None;
+    //     }
+    // }
+    //
+    // /// Force moves selected piece by internal coordinates INDEPENDENT of turn to any square.
+    // /// Moves to given x (usize) and y (usize)
+    // pub fn force_move_selected_piece_with_coords(&mut self, x:usize, y:usize) {
+    //     if self.selected_piece.is_some(){
+    //         self.force_move_piece_with_coords(
+    //             self.selected_piece.as_ref().unwrap().coords,
+    //             Coords{x, y}
+    //         );
+    //         self.selected_piece = None;
+    //     }
+    // }
+    //
+    // /// Force plays by internal coordinates DEPENDENT of turn to any square.
+    // /// Moves with structs named 'from' (Coords) and 'to' (Coords)
+    // pub fn force_play_with_coords(&mut self, from: Coords, to:Coords){
+    //     if self.board[from.y][from.x].is_some() {
+    //         if self.board[from.y][from.x].as_ref().unwrap().color == self.turn {
+    //             self.force_move_piece_with_coords(from, to);
+    //
+    //             // TODO: Should be fixed
+    //             match self.turn {
+    //                 Colors::White => self.turn = Colors::Black,
+    //                 Colors::Black => self.turn = Colors::White,
+    //             }
+    //         }
+    //     }
+    // }
+    //
+    // /// Force plays selected piece by internal coordinates DEPENDENT of turn to any square.
+    // /// Moves to given x (usize) and y (usize)
+    // pub fn force_play_selected_piece_with_coords(&mut self, x:usize, y:usize){
+    //     if self.selected_piece.is_some() {
+    //         if self.selected_piece.as_ref().unwrap().color == self.turn {
+    //             self.force_move_selected_piece_with_coords(x, y);
+    //
+    //             // TODO: Should be fixed
+    //             match self.turn {
+    //                 Colors::White => self.turn = Colors::Black,
+    //                 Colors::Black => self.turn = Colors::White,
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 #[cfg(test)]
@@ -306,7 +396,7 @@ mod tests {
     fn print_empty_board_with_ranks() {
         let chess_engine = ChessEngine::create_engine_with_empty_board();
 
-        chess_engine.print_board_with_ranks();
+        chess_engine.print_board_with_ranks_and_files();
 
     }
 
@@ -315,7 +405,7 @@ mod tests {
     fn print_filled_board_with_ranks() {
         let chess_engine = ChessEngine::create_engine_filled_with_white_board();
 
-        chess_engine.print_board_with_ranks();
+        chess_engine.print_board_with_ranks_and_files();
     }
 
     //TODO: Need to fix tests to compare to board states (or worst case strings)
@@ -332,7 +422,7 @@ mod tests {
     fn print_standard_board_with_ranks() {
         let chess_engine = ChessEngine::new();
 
-        chess_engine.print_board_with_ranks();
+        chess_engine.print_board_with_ranks_and_files();
     }
 
     #[test]
@@ -657,7 +747,7 @@ mod tests {
     }
 
     #[test]
-    fn test_selection_with_coords() {
+    fn test_selection_with_coords_occupied() {
         let mut chess_engine = ChessEngine::new();
 
         let coords = Coords::new(7, 7);
@@ -666,6 +756,73 @@ mod tests {
 
         assert_eq!(chess_engine.get_piece_option_with_coords(coords.x, coords.y),
                    chess_engine.selected_piece);
+    }
+
+    #[test]
+    fn test_selection_with_coords_empty() {
+        let mut chess_engine = ChessEngine::new();
+
+        let coords = Coords::new(3, 3);
+
+        chess_engine.select_piece_with_coords(coords.x, coords.y);
+
+        assert_eq!(chess_engine.get_piece_option_with_coords(coords.x, coords.y),
+                   chess_engine.selected_piece);
+    }
+
+    #[test]
+    fn test_selection_with_coords_two_times() {
+        let mut chess_engine = ChessEngine::new();
+
+        let coords = Coords::new(7, 7);
+
+        chess_engine.select_piece_with_coords(coords.x, coords.y);
+
+        assert_eq!(chess_engine.get_piece_option_with_coords(coords.x, coords.y),
+                   chess_engine.selected_piece);
+
+        let coords = Coords::new(0, 7);
+
+        chess_engine.select_piece_with_coords(coords.x, coords.y);
+
+        assert_eq!(chess_engine.get_piece_option_with_coords(coords.x, coords.y),
+                   chess_engine.selected_piece);
+
+        // println!("{:?}", chess_engine.selected_piece);
+
+    }
+
+    #[test]
+   fn test_deselect_occupied() {
+        let mut chess_engine = ChessEngine::new();
+
+        let coords = Coords::new(7, 7);
+
+        chess_engine.select_piece_with_coords(coords.x, coords.y);
+
+        assert_eq!(chess_engine.selected_piece,
+                   Some(Piece::new(PieceTypes::Rook, Colors::White, coords)));
+
+        chess_engine.deselect();
+
+        assert_eq!(chess_engine.selected_piece, None);
+
+    }
+
+    #[test]
+    fn test_deselect_empty() {
+        let mut chess_engine = ChessEngine::new();
+
+        let coords = Coords::new(3, 3);
+
+        chess_engine.select_piece_with_coords(coords.x, coords.y);
+
+        assert_eq!(chess_engine.selected_piece, None);
+
+        chess_engine.deselect();
+
+        assert_eq!(chess_engine.selected_piece, None);
+
     }
 
     #[test]
