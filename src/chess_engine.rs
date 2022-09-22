@@ -233,7 +233,7 @@ impl ChessEngine {
         }
     }
 
-    pub fn get_coords_from_notation(&mut self, square: &str) -> Coords {
+    pub fn get_coords_from_notation(&self, square: &str) -> Coords {
         if square.len() != 2 {
             panic!("Length of square str should be 2, in the format of LetterNumber \
             (where letter is a-h and number is 1-8), e.g a1 or h8")
@@ -273,18 +273,27 @@ impl ChessEngine {
 
         coords
     }
-    // /// Selects piece INDEPENDENT of turn
-    // pub fn force_select_piece_with_notation(&mut self, square: &str){
-    //     self.selected_piece = self.get_piece_option_with_coords(x, y);
-    // }
-    //
-    // /// Selects piece DEPENDENT of turn
-    // pub fn select_piece_with_coords(&mut self, x:usize, y:usize){
-    //     if self.turn == self.get_piece_option_with_coords(x, y).as_ref().unwrap().color{
-    //         self.selected_piece = self.get_piece_option_with_coords(x, y);
-    //     }
-    // }
-    //
+
+    /// Selects piece INDEPENDENT of turn
+    pub fn force_select_piece_with_notation(&mut self, square: &str){
+        let coords = self.get_coords_from_notation(square);
+        self.selected_piece = self.get_piece_option_with_coords(coords.x, coords.y);
+    }
+
+    /// Selects piece DEPENDENT of turn
+    pub fn select_piece_notation(&mut self, square: &str){
+        let coords = self.get_coords_from_notation(square);
+        if self.turn == self.get_piece_option_with_coords(coords.x, coords.y).as_ref().unwrap().color{
+            self.selected_piece = self.get_piece_option_with_coords(coords.x, coords.y);
+        }
+    }
+
+    pub fn get_piece_option_with_notation(&self, square: &str) -> Option<Piece> {
+        let coords = self.get_coords_from_notation(square);
+        self.get_piece_option_with_coords(coords.x, coords.y)
+    }
+
+
     // // TODO: Fix scuffed moving of elements from one vec position to another
     // /// Force moves by internal coordinates INDEPENDENT of turn turn to any square.
     // /// Moves with structs named 'from' (Coords) and 'to' (Coords)
@@ -351,16 +360,6 @@ impl ChessEngine {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    // struct TestContents {
-    //     chess_engine: ChessEngine,
-    // }
-    //
-    // fn setup() -> TestContents {
-    //     TestContents {
-    //         chess_engine: ChessEngine::new(),
-    //     }
-    // }
 
     #[test]
     fn test_create_new() {
@@ -1162,5 +1161,39 @@ mod tests {
 
         chess_engine.get_coords_from_notation("--");
 
+    }
+
+    #[test]
+    fn test_get_piece_with_notation() {
+        let mut chess_engine = ChessEngine::new();
+
+        let coords = Coords::new(7, 7);
+
+        assert_eq!(chess_engine.get_piece_option_with_coords(coords.x, coords.y),
+                   chess_engine.get_piece_option_with_notation("h1"));
+
+    }
+
+    #[test]
+    fn test_select_notation_once() {
+        let mut chess_engine = ChessEngine::new();
+
+        let mut s = "h1";
+
+        chess_engine.select_piece_notation(s);
+
+        assert_eq!(chess_engine.selected_piece, chess_engine.get_piece_option_with_notation(s));
+
+    }
+
+    #[test]
+    fn test_select_notation_once_wrong_turn() {
+        let mut chess_engine = ChessEngine::new();
+
+        let s = "h8";
+
+        chess_engine.select_piece_notation(s);
+
+        assert_eq!(chess_engine.selected_piece, None);
     }
 }

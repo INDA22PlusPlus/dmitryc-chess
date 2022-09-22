@@ -1,3 +1,5 @@
+extern crate core;
+
 mod chess_engine;
 mod piece;
 mod coords;
