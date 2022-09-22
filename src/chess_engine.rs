@@ -158,12 +158,12 @@ impl ChessEngine {
     }
 
     /// Selects piece INDEPENDENT of turn
-    pub fn force_select_piece_with_coords(&mut self, x:usize, y:usize){
+    pub fn force_select_piece_with_coords(&mut self, x:usize, y:usize) {
         self.selected_piece = self.get_piece_option_with_coords(x, y);
     }
 
     /// Selects piece DEPENDENT of turn
-    pub fn select_piece_with_coords(&mut self, x:usize, y:usize){
+    pub fn select_piece_with_coords(&mut self, x:usize, y:usize) {
         if self.get_piece_option_with_coords(x, y).is_some(){
             if self.turn == self.get_piece_option_with_coords(x, y).as_ref().unwrap().color{
                 self.selected_piece = self.get_piece_option_with_coords(x, y);
@@ -203,7 +203,7 @@ impl ChessEngine {
 
     /// Force plays by internal coordinates DEPENDENT of turn to any square.
     /// Moves with structs named 'from' (Coords) and 'to' (Coords)
-    pub fn force_play_with_coords(&mut self, from: Coords, to:Coords){
+    pub fn force_play_with_coords(&mut self, from: Coords, to:Coords) {
         if self.board[from.y][from.x].is_some() {
             if self.board[from.y][from.x].as_ref().unwrap().color == self.turn {
                 self.force_move_piece_with_coords(from, to);
@@ -219,7 +219,7 @@ impl ChessEngine {
 
     /// Force plays selected piece by internal coordinates DEPENDENT of turn to any square.
     /// Moves to given x (usize) and y (usize)
-    pub fn force_play_selected_piece_with_coords(&mut self, x:usize, y:usize){
+    pub fn force_play_selected_piece_with_coords(&mut self, x:usize, y:usize) {
         if self.selected_piece.is_some() {
             if self.selected_piece.as_ref().unwrap().color == self.turn {
                 self.force_move_selected_piece_with_coords(x, y);
@@ -233,13 +233,45 @@ impl ChessEngine {
         }
     }
 
-    pub fn get_coords_from_notation(&mut self, square: &str){
-        let file = square.chars().next().expect("Wrong Format").to_lowercase();
-        let rank = square.chars().next().expect("Wrong Format").to_lowercase();
+    pub fn get_coords_from_notation(&mut self, square: &str) -> Coords {
+        if square.len() != 2 {
+            panic!("Length of square str should be 2, in the format of LetterNumber \
+            (where letter is a-h and number is 1-8), e.g a1 or h8")
+        }
 
-        for (file_letter, file_x) in zip('a'..'h', 0..7){
-            println!("{} {}", file_letter, file_x);
+        let file = square.chars().nth(0).unwrap().to_ascii_lowercase();
+
+        if !('a'..='h').contains(&file) {
+            panic!("Wrong format! File should be a-h!")
+        }
+
+        let rank = square.chars().nth(1).unwrap().to_digit(9).unwrap() as usize;
+
+        if Size::check_width(rank) {
+            panic!("Wrong format! Rank should be 1-8!")
+        }
+
+        let mut coords = Coords::new(0, 0);
+
+        // println!("{} {}", file, rank);
+
+        for (file_letter, file_x) in zip('a'..='h', 0..=7){
+            // println!("{} {}", file_letter, file_x);
+            if file == file_letter{
+                coords.x = file_x;
+                break;
+            }
         };
+
+        for (rank_number, rank_x) in zip((1..=8).rev(), 0..=7){
+            // println!("{} {}", rank_number, rank_x);
+            if rank == rank_number{
+                coords.y = rank_x;
+                break;
+            }
+        };
+
+        coords
     }
     // /// Selects piece INDEPENDENT of turn
     // pub fn force_select_piece_with_notation(&mut self, square: &str){
@@ -1016,5 +1048,119 @@ mod tests {
         assert_eq!(chess_engine.selected_piece, None);
         assert_eq!(chess_engine.get_piece_option_with_coords(to.x, to.y), None);
         assert_eq!(chess_engine.turn, Colors::Black);
+    }
+
+    #[test]
+    fn test_get_coords_from_notation_h1() {
+        let mut chess_engine = ChessEngine::new();
+
+        let coords = chess_engine.get_coords_from_notation("h1");
+
+        // println!("{:?}", coords);
+
+        assert_eq!(Coords::new(7, 7), coords);
+    }
+
+    #[test]
+    fn test_get_coords_from_notation_a8() {
+        let mut chess_engine = ChessEngine::new();
+
+        let coords = chess_engine.get_coords_from_notation("a8");
+
+        // println!("{:?}", coords);
+
+        assert_eq!(Coords::new(0, 0), coords);
+    }
+
+    #[test]
+    fn test_get_coords_from_notation_e4() {
+        let mut chess_engine = ChessEngine::new();
+
+        let coords = chess_engine.get_coords_from_notation("e4");
+
+        // println!("{:?}", coords);
+
+        assert_eq!(Coords::new(4, 4), coords);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_get_coords_from_notation_i5_should_panic() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.get_coords_from_notation("i5");
+
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_get_coords_from_notation_a0_should_panic() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.get_coords_from_notation("a0");
+
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_get_coords_from_notation_a9_should_panic() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.get_coords_from_notation("a9");
+
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_get_coords_from_notation_99_should_panic() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.get_coords_from_notation("99");
+
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_get_coords_from_notation_aa_should_panic() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.get_coords_from_notation("aa");
+
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_get_coords_from_notation_a11_should_panic() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.get_coords_from_notation("a11");
+
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_get_coords_from_notation_empty_str_should_panic() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.get_coords_from_notation("");
+
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_get_coords_from_notation_a_should_panic() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.get_coords_from_notation("a");
+
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_get_coords_from_notation_unsupported_types_should_panic() {
+        let mut chess_engine = ChessEngine::new();
+
+        chess_engine.get_coords_from_notation("--");
+
     }
 }

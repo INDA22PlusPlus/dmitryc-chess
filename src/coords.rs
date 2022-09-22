@@ -6,13 +6,21 @@ pub struct Size {
 
 impl Size {
     pub fn new(w:usize, h:usize) -> Size {
-        if w == 0 || w > 8 {
+        if Self::check_width(w) {
             panic!("Width must be between 1 and 8!")
         }
-        if h == 0 || h > 8 {
+        if Self::check_height(h) {
             panic!("Height must be between 1 and 8!")
         }
         Self{w, h}
+    }
+
+    pub fn check_width(w:usize) -> bool {
+        w == 0 || w > 8
+    }
+
+    pub fn check_height(h:usize) -> bool {
+        h == 0 || h > 8
     }
 }
 
