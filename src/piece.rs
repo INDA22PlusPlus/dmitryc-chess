@@ -84,9 +84,7 @@ impl Piece {
         }
     }
 
-    pub fn set_coords(&mut self, coords: Coords){
-        self.coords = coords;
-    }
+    // pub fn
 }
 
 #[cfg(test)]
@@ -121,9 +119,11 @@ mod tests {
 
     //TODO: How to write this type of test
 
-    // #[test]
-    // #[should_panic]
-    // fn assign_larger_value_than_u8() {
-    //     let s = Size{w:1000, h:1000};
-    // }
+    #[test]
+    #[should_panic]
+    fn assign_larger_value_than_limit() {
+        Piece::new(PieceTypes::King,
+                   Colors::Black,
+                   Coords::new(8, 8));
+    }
 }

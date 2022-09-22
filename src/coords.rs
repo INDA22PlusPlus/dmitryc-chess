@@ -25,6 +25,18 @@ impl Size {
 }
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
+pub struct RelCoords {
+    pub x:isize,
+    pub y:isize,
+}
+
+impl RelCoords {
+    pub fn new(x:isize, y:isize) -> RelCoords{
+        RelCoords{x, y}
+    }
+}
+
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub struct Coords {
     pub x:usize,
     pub y:usize,
@@ -39,6 +51,11 @@ impl Coords {
             panic!("Height must be between 0 and 7!")
         }
         Self{x, y}
+    }
+
+    pub fn check_within_coords(coords: Coords, rel_coords: RelCoords) -> bool {
+        (coords.x as isize + rel_coords.x > 0 && coords.x as isize + rel_coords.x <= 7) &&
+            (coords.y as isize + rel_coords.y > 0 && coords.y as isize + rel_coords.y <= 7)
     }
 }
 
@@ -132,7 +149,7 @@ mod tests {
     // #[test]
     // #[should_panic]
     // fn assign_negative_coords() {
-    //     let c = Coords::new(-1, -1);
+    //     let c = Coords::new(-2, -3);
     // }
 
     #[test]
@@ -141,4 +158,51 @@ mod tests {
         Coords::new(8, 8);
     }
 
+    #[test]
+    fn assign_rel_coords() {
+        let r = RelCoords::new(-1, 1);
+
+        assert_eq!(-1, r.x);
+        assert_eq!(1, r.y);
+    }
+
+    #[test]
+    fn check_within_coords_true() {
+        let c = Coords::new(0, 0);
+        let r = RelCoords::new(1, 1);
+
+        assert_eq!(Coords::check_within_coords(c, r), true);
+    }
+
+    #[test]
+    fn check_within_coords_false_x_positive() {
+        let c = Coords::new(7, 6);
+        let r = RelCoords::new(1, 1);
+
+        assert_eq!(Coords::check_within_coords(c, r), false);
+    }
+
+    #[test]
+    fn check_within_coords_false_y_positive() {
+        let c = Coords::new(6, 7);
+        let r = RelCoords::new(1, 1);
+
+        assert_eq!(Coords::check_within_coords(c, r), false);
+    }
+
+    #[test]
+    fn check_within_coords_false_x_negative() {
+        let c = Coords::new(0, 0);
+        let r = RelCoords::new(-1, 0);
+
+        assert_eq!(Coords::check_within_coords(c, r), false);
+    }
+
+    #[test]
+    fn check_within_coords_false_y_negative() {
+        let c = Coords::new(0, 0);
+        let r = RelCoords::new(0, -1);
+
+        assert_eq!(Coords::check_within_coords(c, r), false);
+    }
 }
