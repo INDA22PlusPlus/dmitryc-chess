@@ -274,13 +274,13 @@ impl ChessEngine {
         coords
     }
 
-    /// Selects piece INDEPENDENT of turn
+    /// Selects piece INDEPENDENT of turn, using algebraic notation (chess notation)
     pub fn force_select_piece_with_notation(&mut self, square: &str){
         let coords = self.get_coords_from_notation(square);
         self.selected_piece = self.get_piece_option_with_coords(coords.x, coords.y);
     }
 
-    /// Selects piece DEPENDENT of turn
+    /// Selects piece DEPENDENT of turn, using algebraic notation (chess notation)
     pub fn select_piece_notation(&mut self, square: &str){
         let coords = self.get_coords_from_notation(square);
         if self.turn == self.get_piece_option_with_coords(coords.x, coords.y).as_ref().unwrap().color{
@@ -294,67 +294,39 @@ impl ChessEngine {
     }
 
 
-    // // TODO: Fix scuffed moving of elements from one vec position to another
-    // /// Force moves by internal coordinates INDEPENDENT of turn turn to any square.
-    // /// Moves with structs named 'from' (Coords) and 'to' (Coords)
-    // pub fn force_move_piece_with_coords(&mut self, from: Coords, to:Coords) {
-    //     if self.board[from.y][from.x].is_some(){
-    //         // TODO: Fix creating of new object instead of moving existing
-    //         self.board[to.y][to.x] = Some(Piece::new(
-    //             self.board[from.y][from.x].as_ref().unwrap().piece_type,
-    //             self.board[from.y][from.x].as_ref().unwrap().color,
-    //             to));
-    //
-    //         // self.board[to.y][to.x] = self.board[from.y][from.x].clone();
-    //         // self.board[to.y][to.x].unwrap().set_coords(to);              \\ How to fix?
-    //
-    //         self.board[from.y][from.x] = None;
-    //     }
-    // }
-    //
-    // /// Force moves selected piece by internal coordinates INDEPENDENT of turn to any square.
-    // /// Moves to given x (usize) and y (usize)
-    // pub fn force_move_selected_piece_with_coords(&mut self, x:usize, y:usize) {
-    //     if self.selected_piece.is_some(){
-    //         self.force_move_piece_with_coords(
-    //             self.selected_piece.as_ref().unwrap().coords,
-    //             Coords{x, y}
-    //         );
-    //         self.selected_piece = None;
-    //     }
-    // }
-    //
-    // /// Force plays by internal coordinates DEPENDENT of turn to any square.
-    // /// Moves with structs named 'from' (Coords) and 'to' (Coords)
-    // pub fn force_play_with_coords(&mut self, from: Coords, to:Coords){
-    //     if self.board[from.y][from.x].is_some() {
-    //         if self.board[from.y][from.x].as_ref().unwrap().color == self.turn {
-    //             self.force_move_piece_with_coords(from, to);
-    //
-    //             // TODO: Should be fixed
-    //             match self.turn {
-    //                 Colors::White => self.turn = Colors::Black,
-    //                 Colors::Black => self.turn = Colors::White,
-    //             }
-    //         }
-    //     }
-    // }
-    //
-    // /// Force plays selected piece by internal coordinates DEPENDENT of turn to any square.
-    // /// Moves to given x (usize) and y (usize)
-    // pub fn force_play_selected_piece_with_coords(&mut self, x:usize, y:usize){
-    //     if self.selected_piece.is_some() {
-    //         if self.selected_piece.as_ref().unwrap().color == self.turn {
-    //             self.force_move_selected_piece_with_coords(x, y);
-    //
-    //             // TODO: Should be fixed
-    //             match self.turn {
-    //                 Colors::White => self.turn = Colors::Black,
-    //                 Colors::Black => self.turn = Colors::White,
-    //             }
-    //         }
-    //     }
-    // }
+    /// Force moves by algebraic notation (chess notation) INDEPENDENT of turn turn to any square.
+    /// Moves with structs named 'from' (&str) and 'to' (&str)
+    pub fn force_move_piece_with_notation(&mut self, from: &str, to:&str) {
+        let from_coords = self.get_coords_from_notation(from);
+        let to_coords = self.get_coords_from_notation(to);
+
+        self.force_move_piece_with_coords(from_coords, to_coords);
+    }
+
+    /// Force moves selected piece by algebraic notation (chess notation)
+    /// INDEPENDENT of turn to any square.
+    pub fn force_move_selected_piece_notation(&mut self, square: &str) {
+        let coords = self.get_coords_from_notation(square);
+
+        self.force_move_selected_piece_with_coords(coords.x, coords.y);
+    }
+
+    /// Force plays by algebraic notation (chess notation) DEPENDENT of turn to any square.
+    /// Moves with structs named 'from' (&str) and 'to' (&str)
+    pub fn force_play_with_notation(&mut self, from: &str, to:&str){
+        let from_coords = self.get_coords_from_notation(from);
+        let to_coords = self.get_coords_from_notation(to);
+
+        self.force_play_with_coords(from_coords, to_coords);
+    }
+
+    /// Force plays selected piece algebraic notation (chess notation) coordinates
+    /// DEPENDENT of turn to any square.
+    pub fn force_play_selected_piece_with_notation(&mut self, square: &str){
+        let coords = self.get_coords_from_notation(square);
+
+        self.force_play_selected_piece_with_coords(coords.x, coords.y);
+    }
 }
 
 #[cfg(test)]
@@ -1195,5 +1167,141 @@ mod tests {
         chess_engine.select_piece_notation(s);
 
         assert_eq!(chess_engine.selected_piece, None);
+    }
+
+    #[test]
+    fn test_force_move_notation() {
+        let mut chess_engine = ChessEngine::new();
+
+        let from = "h1";
+        let to = "h8";
+
+        chess_engine.force_move_piece_with_notation(from, to);
+
+        assert_eq!(chess_engine.get_piece_option_with_notation(from), None);
+        assert_eq!(chess_engine.get_piece_option_with_notation(to),
+                   Some(Piece::new(PieceTypes::Rook,
+                                   Colors::White,
+                                   chess_engine.get_coords_from_notation(to))
+                   )
+        );
+    }
+
+    #[test]
+    fn test_force_move_selected_piece_notation() {
+        let mut chess_engine = ChessEngine::new();
+
+        let from = "h1";
+        let to = "h8";
+
+        chess_engine.select_piece_notation(from);
+
+        assert_eq!(chess_engine.selected_piece, chess_engine.get_piece_option_with_notation(from));
+
+        chess_engine.force_move_selected_piece_notation(to);
+
+        assert_eq!(chess_engine.get_piece_option_with_notation(from), None);
+        assert_eq!(chess_engine.selected_piece, None);
+        assert_eq!(chess_engine.get_piece_option_with_notation(to),
+                   Some(Piece::new(PieceTypes::Rook,
+                                   Colors::White,
+                                   chess_engine.get_coords_from_notation(to))
+                   )
+        );
+    }
+
+    #[test]
+    fn test_force_play_notation() {
+        let mut chess_engine = ChessEngine::new();
+
+        let from = "h1";
+        let to = "h8";
+
+        chess_engine.force_play_with_notation(from, to);
+
+        assert_eq!(chess_engine.get_piece_option_with_notation(from), None);
+        assert_eq!(chess_engine.turn, Colors::Black);
+        assert_eq!(chess_engine.get_piece_option_with_notation(to),
+                   Some(Piece::new(PieceTypes::Rook,
+                                   Colors::White,
+                                   chess_engine.get_coords_from_notation(to))
+                   )
+        );
+    }
+
+    #[test]
+    fn test_force_play_notation_wrong_turn() {
+        let mut chess_engine = ChessEngine::new();
+
+        let from = "h8";
+        let to = "h1";
+
+        chess_engine.force_play_with_notation(from, to);
+
+        assert_eq!(chess_engine.get_piece_option_with_notation(from),
+                   Some(Piece::new(PieceTypes::Rook,
+                                   Colors::Black,
+                                   chess_engine.get_coords_from_notation(from))
+                   )
+        );
+        assert_eq!(chess_engine.turn, Colors::White);
+        assert_eq!(chess_engine.get_piece_option_with_notation(to),
+                   Some(Piece::new(PieceTypes::Rook,
+                                   Colors::White,
+                                   chess_engine.get_coords_from_notation(to))
+                   )
+        );
+    }
+
+    #[test]
+    fn test_force_play_selected_piece_notation() {
+        let mut chess_engine = ChessEngine::new();
+
+        let from = "h1";
+        let to = "h8";
+
+        chess_engine.select_piece_notation(from);
+
+        assert_eq!(chess_engine.selected_piece,
+                   chess_engine.get_piece_option_with_notation(from));
+
+        chess_engine.force_play_selected_piece_with_notation(to);
+
+        assert_eq!(chess_engine.get_piece_option_with_notation(from), None);
+        assert_eq!(chess_engine.turn, Colors::Black);
+        assert_eq!(chess_engine.get_piece_option_with_notation(to),
+                   Some(Piece::new(PieceTypes::Rook,
+                                   Colors::White,
+                                   chess_engine.get_coords_from_notation(to))
+                   )
+        );
+    }
+
+    #[test]
+    fn test_force_play_selected_piece_notation_wrong_turn() {
+        let mut chess_engine = ChessEngine::new();
+
+        let from = "h8";
+        let to = "h1";
+
+        chess_engine.select_piece_notation(from);
+
+        assert_eq!(chess_engine.selected_piece, None);
+
+        chess_engine.force_play_selected_piece_with_notation(to);
+
+        assert_eq!(chess_engine.get_piece_option_with_notation(from),
+                   Some(Piece::new(PieceTypes::Rook,
+                                   Colors::Black,
+                                   chess_engine.get_coords_from_notation(from))
+                   )
+        );
+        assert_eq!(chess_engine.turn, Colors::White);
+        assert_eq!(chess_engine.get_piece_option_with_notation(to),
+                   Some(Piece::new(PieceTypes::Rook,
+                                   Colors::White,
+                                   chess_engine.get_coords_from_notation(to))
+                   )
+        );
     }
 }
