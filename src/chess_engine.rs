@@ -146,7 +146,79 @@ impl ChessEngine {
         println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
     }
 
-    pub fn print_board_with_ranks_and_files_and_moves(&self) {
+    pub fn print_board_with_ranks_and_files_with_all_legal_moves(&self) {
+        let moves = self.get_all_legal_moves();
+
+        print!("  ");
+        for letter in b'A'..=b'H'{
+            print!(" {} ", letter as char);
+        }
+        println!();
+
+        let mut numbered_rank = 8;
+        for (row, y) in zip(self.board.clone(), 0..=7) {
+            println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
+            print!("{} ", &numbered_rank);
+            for (square, x) in zip(row, 0..=7) {
+                let coords = Coords::new(x, y);
+                let mut square_str = &*Self::get_piece_string_from_option(&square);
+                if moves.contains(&coords){
+                    print!("|{}", square_str.on_purple());
+                }
+                else {
+                    print!("|{}", square_str);    // TODO Figure out the right way to do this
+                }
+            }
+            println!("|");
+
+            numbered_rank -= 1;
+        }
+    }
+
+    pub fn print_board_with_ranks_and_files_with_all_legal_moves_different_colors(&self) {
+        let moves = self.get_moves();
+        let attacked_squares = self.get_all_attacked_squares();
+        let attacked_pieces_squares = self.get_all_attacked_pieces_squares();
+        let special_moves = self.get_all_special_moves();
+
+        print!("  ");
+        for letter in b'A'..=b'H'{
+            print!(" {} ", letter as char);
+        }
+        println!();
+
+        let mut numbered_rank = 8;
+        for (row, y) in zip(self.board.clone(), 0..=7) {
+            println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
+            print!("{} ", &numbered_rank);
+            for (square, x) in zip(row, 0..=7) {
+                let coords = Coords::new(x, y);
+                let mut square_str = (&*Self::get_piece_string_from_option(&square)).normal();
+                if special_moves.contains(&coords){
+                    print!("|{}", square_str.on_green());
+                    continue;
+                }
+                if attacked_pieces_squares.contains(&coords){
+                    print!("|{}", square_str.on_red());
+                    continue;
+                }
+                if attacked_squares.contains(&coords){
+                    print!("|{}", square_str.on_bright_red());
+                    continue;
+                }
+                if moves.contains(&coords){
+                    print!("|{}", square_str.on_blue());
+                    continue;
+                }
+                print!("|{}", square_str);    // TODO Figure out the right way to do this
+            }
+            println!("|");
+
+            numbered_rank -= 1;
+        }
+    }
+
+    pub fn print_board_with_ranks_and_files_with_moves(&self) {
         let moves = self.get_moves();
 
         print!("  ");
@@ -173,17 +245,93 @@ impl ChessEngine {
 
             numbered_rank -= 1;
         }
-        // self.board.iter().for_each(|row| {
-        //     println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
-        //     print!("{} ", &numbered_rank);
-        //     row.iter().for_each(|square| {
-        //         print!("|{}", Self::get_piece_string_from_option(square));    // TODO Figure out the right way to do this
-        //     });
-        //     println!("|");
-        //
-        //     numbered_rank -= 1;
-        // });
-        // println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
+    }
+
+    pub fn print_board_with_ranks_and_files_with_special_moves(&self) {
+        let moves = self.get_all_special_moves();
+
+        print!("  ");
+        for letter in b'A'..=b'H'{
+            print!(" {} ", letter as char);
+        }
+        println!();
+
+        let mut numbered_rank = 8;
+        for (row, y) in zip(self.board.clone(), 0..=7) {
+            println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
+            print!("{} ", &numbered_rank);
+            for (square, x) in zip(row, 0..=7) {
+                let coords = Coords::new(x, y);
+                let mut square_str = &*Self::get_piece_string_from_option(&square);
+                if moves.contains(&coords){
+                    print!("|{}", square_str.on_green());
+                }
+                else {
+                    print!("|{}", square_str);    // TODO Figure out the right way to do this
+                }
+            }
+            println!("|");
+
+            numbered_rank -= 1;
+        }
+    }
+
+    pub fn print_board_with_ranks_and_files_with_attacked_squares(&self) {
+        let moves = self.get_all_attacked_squares();
+
+        print!("  ");
+        for letter in b'A'..=b'H'{
+            print!(" {} ", letter as char);
+        }
+        println!();
+
+        let mut numbered_rank = 8;
+        for (row, y) in zip(self.board.clone(), 0..=7) {
+            println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
+            print!("{} ", &numbered_rank);
+            for (square, x) in zip(row, 0..=7) {
+                let coords = Coords::new(x, y);
+                let mut square_str = &*Self::get_piece_string_from_option(&square);
+                if moves.contains(&coords){
+                    print!("|{}", square_str.on_bright_red());
+                }
+                else {
+                    print!("|{}", square_str);    // TODO Figure out the right way to do this
+                }
+            }
+            println!("|");
+
+            numbered_rank -= 1;
+        }
+    }
+
+    pub fn print_board_with_ranks_and_files_with_attacked_pieces_squares(&self) {
+        let moves = self.get_all_attacked_pieces_squares();
+
+        print!("  ");
+        for letter in b'A'..=b'H'{
+            print!(" {} ", letter as char);
+        }
+        println!();
+
+        let mut numbered_rank = 8;
+        for (row, y) in zip(self.board.clone(), 0..=7) {
+            println!("  {}", "-".repeat((&self.size.w * 3 + 1) as usize));
+            print!("{} ", &numbered_rank);
+            for (square, x) in zip(row, 0..=7) {
+                let coords = Coords::new(x, y);
+                let mut square_str = &*Self::get_piece_string_from_option(&square);
+                if moves.contains(&coords){
+                    print!("|{}", square_str.on_red());
+                }
+                else {
+                    print!("|{}", square_str);    // TODO Figure out the right way to do this
+                }
+            }
+            println!("|");
+
+            numbered_rank -= 1;
+        }
     }
 
     pub fn get_piece_string_from_option(square: &Option<Piece>) -> String {
@@ -383,6 +531,22 @@ impl ChessEngine {
         self.board[coords.y][coords.x] = piece_option;
     }
 
+    fn get_all_legal_moves(&self) -> HashSet<Coords> {
+        let mut moves = HashSet::new();
+
+        for row in self.board.clone() {
+            for square in row {
+                if square.is_some() {
+                    for piece_move in square.unwrap().get_all_legal_moves(self.board.clone()){
+                        moves.insert(piece_move);
+                    }
+                }
+            }
+        }
+
+        moves
+    }
+
     fn get_moves(&self) -> HashSet<Coords> {
         let mut moves = HashSet::new();
 
@@ -390,6 +554,54 @@ impl ChessEngine {
             for square in row {
                 if square.is_some() {
                     for piece_move in square.unwrap().get_moves(self.board.clone()){
+                        moves.insert(piece_move);
+                    }
+                }
+            }
+        }
+
+        moves
+    }
+
+    fn get_all_special_moves(&self) -> HashSet<Coords> {
+        let mut moves = HashSet::new();
+
+        for row in self.board.clone() {
+            for square in row {
+                if square.is_some() {
+                    for piece_move in square.unwrap().get_special_moves(self.board.clone()){
+                        moves.insert(piece_move);
+                    }
+                }
+            }
+        }
+
+        moves
+    }
+
+    fn get_all_attacked_squares(&self) -> HashSet<Coords> {
+        let mut moves = HashSet::new();
+
+        for row in self.board.clone() {
+            for square in row {
+                if square.is_some() {
+                    for piece_move in square.unwrap().get_attacked_squares(self.board.clone()){
+                        moves.insert(piece_move);
+                    }
+                }
+            }
+        }
+
+        moves
+    }
+
+    fn get_all_attacked_pieces_squares(&self) -> HashSet<Coords> {
+        let mut moves = HashSet::new();
+
+        for row in self.board.clone() {
+            for square in row {
+                if square.is_some() {
+                    for piece_move in square.unwrap().get_attacked_pieces_squares(self.board.clone()){
                         moves.insert(piece_move);
                     }
                 }
