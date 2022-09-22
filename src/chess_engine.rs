@@ -19,7 +19,7 @@ impl ChessEngine {
     }
 
     // TODO: Non-readable code, needs refactoring later
-    fn create_engine_filled_with_white_board() -> ChessEngine {
+    pub fn create_engine_filled_with_white_board() -> ChessEngine {
         let temp_size = Size::new(8, 8);
         let mut temp_board = vec![vec![None;temp_size.w as usize]; temp_size.h as usize];
         for x in 0..temp_size.w  {
@@ -37,7 +37,7 @@ impl ChessEngine {
         }
     }
 
-    fn create_engine_with_empty_board() -> ChessEngine {
+    pub fn create_engine_with_empty_board() -> ChessEngine {
         let temp_size = Size::new(8, 8);
         ChessEngine {
             size: temp_size,
@@ -49,7 +49,7 @@ impl ChessEngine {
     }
 
     // TODO: Refactor due to the ginormous size of the method
-    fn create_engine_with_standard_board() -> ChessEngine {
+    pub fn create_engine_with_standard_board() -> ChessEngine {
         let mut temp_engine = Self::create_engine_with_empty_board();
 
         // Black --------------------------------------------------------------------------

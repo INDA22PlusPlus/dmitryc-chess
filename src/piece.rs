@@ -84,11 +84,38 @@ impl Piece {
         }
     }
 
-    // pub fn
+    pub fn get_coords_from_board(board: Vec<Vec<Option<Piece>>>, color: Colors) -> Vec<Coords> {
+        let mut coords = vec![];
+        for row in board {
+            for square in row {
+                if square.is_some() {
+                    if square.as_ref().unwrap().color == color {
+                        coords.push(square.unwrap().coords)
+                    }
+                }
+            }
+
+        }
+        coords
+    }
+
+    pub fn get_all_legal_moves(board: Vec<Vec<Option<Piece>>>) -> Vec<Coords>{
+        let mut white_pieces = Self::get_coords_from_board(board.clone(),
+                                                           Colors::White);
+        let mut black_pieces = Self::get_coords_from_board(board.clone(),
+                                                           Colors::Black);
+        let mut legal_moves = vec![];
+
+        println!("{:?}", white_pieces);
+        println!("{:?}", black_pieces);
+
+        legal_moves
+    }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::chess_engine::ChessEngine;
     use super::*;
 
     #[test]
@@ -125,5 +152,26 @@ mod tests {
         Piece::new(PieceTypes::King,
                    Colors::Black,
                    Coords::new(8, 8));
+    }
+
+    #[test]
+    fn test_get_coords_from_board_white() {
+        let mut chess_engine = ChessEngine::new();
+        let white_pieces = Piece::get_coords_from_board(chess_engine.board,
+                                                        Colors::White);
+
+        println!("{:?}", white_pieces);
+    }
+
+    #[test]
+    fn test_get_coords_from_board_one_piece() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+        chess_engine.board[3][3] = Some(Piece::new(PieceTypes::Knight,
+                                                   Colors::White,
+                                                   Coords::new(3, 3)));
+        let white_pieces = Piece::get_coords_from_board(chess_engine.board,
+                                                        Colors::White);
+
+        assert_eq!(white_pieces, vec![Coords::new(3, 3)]);
     }
 }
