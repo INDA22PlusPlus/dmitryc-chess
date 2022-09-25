@@ -54,8 +54,8 @@ impl Coords {
     }
 
     pub fn check_within_coords(coords: Coords, rel_coords: RelCoords) -> bool {
-        (coords.x as isize + rel_coords.x > 0 && coords.x as isize + rel_coords.x <= 7) &&
-            (coords.y as isize + rel_coords.y > 0 && coords.y as isize + rel_coords.y <= 7)
+        (coords.x as isize + rel_coords.x >= 0 && coords.x as isize + rel_coords.x <= 7) &&
+            (coords.y as isize + rel_coords.y >= 0 && coords.y as isize + rel_coords.y <= 7)
     }
 
     pub fn coords_and_rel_coords_result(coords: Coords, rel_coords: RelCoords) -> Coords {

@@ -109,28 +109,36 @@ impl Piece {
         // println!("{:?}", white_pieces);
         // println!("{:?}", black_pieces);
 
-        match self.piece_type {
-            PieceTypes::Pawn => {
+        legal_moves.extend(self.get_moves(board.clone()));
+        legal_moves.extend(self.get_special_moves(board.clone()));
+        legal_moves.extend(self.get_attacked_squares(board.clone()));
+        legal_moves.extend(self.get_attacked_pieces_squares(board.clone()));
 
-            }
-            PieceTypes::Knight => {
-                legal_moves.extend(self.get_moves(board.clone()));
-                legal_moves.extend(self.get_attacked_pieces_squares(board.clone()));
-            }
-            PieceTypes::Bishop => {
-
-            }
-            PieceTypes::Rook => {
-
-            }
-            PieceTypes::Queen => {
-
-            }
-            PieceTypes::King => {
-
-            }
-            // _ => {panic!("Not implemented PieceType!")}
-        }
+        // match self.piece_type {
+        //     PieceTypes::Pawn => {
+        //         legal_moves.extend(self.get_moves(board.clone()));
+        //         legal_moves.extend(self.get_moves(board.clone()));
+        //         legal_moves.extend(self.get_moves(board.clone()));
+        //         legal_moves.extend(self.get_attacked_pieces_squares(board.clone()));
+        //     }
+        //     PieceTypes::Knight => {
+        //         legal_moves.extend(self.get_moves(board.clone()));
+        //         legal_moves.extend(self.get_attacked_pieces_squares(board.clone()));
+        //     }
+        //     PieceTypes::Bishop => {
+        //
+        //     }
+        //     PieceTypes::Rook => {
+        //
+        //     }
+        //     PieceTypes::Queen => {
+        //
+        //     }
+        //     PieceTypes::King => {
+        //
+        //     }
+        //     // _ => {panic!("Not implemented PieceType!")}
+        // }
 
 
         legal_moves
@@ -148,7 +156,10 @@ impl Piece {
 
         match self.piece_type {
             PieceTypes::Pawn => {
-
+                legal_moves.extend(self.get_pawn_moves(
+                    white_pieces.clone(),
+                    black_pieces.clone())
+                );
             }
             PieceTypes::Knight => {
                 legal_moves.extend(self.get_knight_moves(
@@ -187,7 +198,10 @@ impl Piece {
 
         match self.piece_type {
             PieceTypes::Pawn => {
-
+                legal_moves.extend(self.get_pawn_special_moves(
+                    white_pieces.clone(),
+                    black_pieces.clone()
+                ));
             }
             PieceTypes::Knight => {}
             PieceTypes::Bishop => {}
@@ -216,7 +230,10 @@ impl Piece {
 
         match self.piece_type {
             PieceTypes::Pawn => {
-
+                legal_moves.extend(self.get_pawn_attacked_squares(
+                    white_pieces.clone(),
+                    black_pieces.clone())
+                )
             }
             PieceTypes::Knight => {
                 legal_moves.extend(self.get_knight_moves(
@@ -255,12 +272,16 @@ impl Piece {
 
         match self.piece_type {
             PieceTypes::Pawn => {
-
+                legal_moves.extend(self.get_pawn_attacked_pieces_squares(
+                    white_pieces.clone(),
+                    black_pieces.clone()
+                ));
             }
             PieceTypes::Knight => {
                 legal_moves.extend(self.get_knight_attacked_pieces_squares(
-                    black_pieces.clone())
-                );
+                    white_pieces.clone(),
+                    black_pieces.clone()
+                ));
             }
             PieceTypes::Bishop => {
 
@@ -314,7 +335,17 @@ impl Piece {
         moves
     }
 
-    fn get_knight_attacked_pieces_squares(&self, black_pieces: Vec<Coords>) -> Vec<Coords> {
+    fn get_knight_attacked_pieces_squares(&self, white_pieces: Vec<Coords>, black_pieces: Vec<Coords>) -> Vec<Coords> {
+        let oposite_color_pieces;
+        match self.color {
+            Colors::White => {
+                oposite_color_pieces = black_pieces.clone();
+            }
+            Colors::Black => {
+                oposite_color_pieces = white_pieces.clone();
+            }
+        }
+
         let rel_moves = vec![
             RelCoords::new(2, 1),
             RelCoords::new(2, -1),
@@ -332,7 +363,145 @@ impl Piece {
             // println!("{:?}", Coords::coords_and_rel_coords_result(self.coords, rel_move));
             if Coords::check_within_coords(self.coords, rel_move){
                 let new_coords = Coords::coords_and_rel_coords_result(self.coords, rel_move);
-                if black_pieces.contains(&new_coords){
+
+                if oposite_color_pieces.contains(&new_coords){
+                    moves.push(new_coords);
+                }
+            }
+        }
+
+        // println!("{:?}", moves);
+
+        moves
+    }
+
+    // Pawn Moves -------------------------------------------------
+
+    fn get_pawn_moves(&self, white_pieces: Vec<Coords>, black_pieces: Vec<Coords>) -> Vec<Coords> {
+        let rel_moves;
+        match self.color {
+            Colors::White => {
+                rel_moves = vec![
+                    RelCoords::new(0, -1),
+                ];
+            }
+            Colors::Black => {
+                rel_moves = vec![
+                    RelCoords::new(0, 1),
+                ];
+            }
+        }
+
+        let mut moves = vec![];
+        for rel_move in rel_moves.clone() {
+            // println!("{:?}", Coords::coords_and_rel_coords_result(self.coords, rel_move));
+            if Coords::check_within_coords(self.coords, rel_move){
+                let new_coords = Coords::coords_and_rel_coords_result(self.coords, rel_move);
+                if !white_pieces.contains(&new_coords) && !black_pieces.contains(&new_coords){
+                    moves.push(new_coords);
+                }
+            }
+        }
+
+        // println!("{:?}", moves);
+
+        moves
+    }
+
+    fn get_pawn_special_moves(&self, white_pieces: Vec<Coords>, black_pieces: Vec<Coords>) -> Vec<Coords> {
+        let rel_moves;
+        let start_at_y;
+        match self.color {
+            Colors::White => {
+                rel_moves = vec![
+                    RelCoords::new(0, -2),
+                ];
+                start_at_y = 6;
+            }
+            Colors::Black => {
+                rel_moves = vec![
+                    RelCoords::new(0, 2),
+                ];
+                start_at_y = 1;
+            }
+        }
+
+        let mut moves = vec![];
+        if self.coords.y == start_at_y {
+            for rel_move in rel_moves.clone() {
+                // println!("{:?}", Coords::coords_and_rel_coords_result(self.coords, rel_move));
+                if Coords::check_within_coords(self.coords, rel_move){
+                    let new_coords = Coords::coords_and_rel_coords_result(self.coords, rel_move);
+                    if !white_pieces.contains(&new_coords) && !black_pieces.contains(&new_coords){
+                        moves.push(new_coords);
+                    }
+                }
+            }
+        }
+
+        // println!("{:?}", moves);
+
+        moves
+    }
+
+    fn get_pawn_attacked_squares(&self, white_pieces: Vec<Coords>, black_pieces: Vec<Coords>) -> Vec<Coords> {
+        let rel_moves;
+        match self.color {
+            Colors::White => {
+                rel_moves = vec![
+                    RelCoords::new(-1, -1),
+                    RelCoords::new(1, -1),
+                ];
+            }
+            Colors::Black => {
+                rel_moves = vec![
+                    RelCoords::new(-1, 1),
+                    RelCoords::new(1, 1),
+                ];
+            }
+        }
+
+        let mut moves = vec![];
+        for rel_move in rel_moves.clone() {
+            // println!("{:?}", Coords::coords_and_rel_coords_result(self.coords, rel_move));
+            if Coords::check_within_coords(self.coords, rel_move){
+                let new_coords = Coords::coords_and_rel_coords_result(self.coords, rel_move);
+                if !white_pieces.contains(&new_coords) && !black_pieces.contains(&new_coords){
+                    moves.push(new_coords);
+                }
+            }
+        }
+
+        moves
+    }
+
+    fn get_pawn_attacked_pieces_squares(&self, white_pieces: Vec<Coords>, black_pieces: Vec<Coords>) -> Vec<Coords> {
+        let oposite_color_pieces;
+        let rel_moves;
+        match self.color {
+            Colors::White => {
+                rel_moves = vec![
+                    RelCoords::new(-1, -1),
+                    RelCoords::new(1, -1),
+                ];
+                oposite_color_pieces = black_pieces.clone();
+            }
+            Colors::Black => {
+                rel_moves = vec![
+                    RelCoords::new(-1, 1),
+                    RelCoords::new(1, 1),
+                ];
+                oposite_color_pieces = white_pieces.clone();
+            }
+        }
+
+        let mut moves = vec![];
+
+        for rel_move in rel_moves.clone() {
+            // println!("{:?}", Coords::coords_and_rel_coords_result(self.coords, rel_move));
+            if Coords::check_within_coords(self.coords, rel_move){
+                let new_coords = Coords::coords_and_rel_coords_result(self.coords, rel_move);
+                if oposite_color_pieces.contains(&new_coords){
                     moves.push(new_coords);
                 }
             }
