@@ -100,46 +100,12 @@ impl Piece {
     }
 
     pub fn get_all_legal_moves(&self, board: Vec<Vec<Option<Piece>>>) -> Vec<Coords> {
-        let mut white_pieces = Self::get_coords_from_board(board.clone(),
-                                                           Colors::White);
-        let mut black_pieces = Self::get_coords_from_board(board.clone(),
-                                                           Colors::Black);
         let mut legal_moves = vec![];
-
-        // println!("{:?}", white_pieces);
-        // println!("{:?}", black_pieces);
 
         legal_moves.extend(self.get_moves(board.clone()));
         legal_moves.extend(self.get_special_moves(board.clone()));
         legal_moves.extend(self.get_attacked_squares(board.clone()));
         legal_moves.extend(self.get_attacked_pieces_squares(board.clone()));
-
-        // match self.piece_type {
-        //     PieceTypes::Pawn => {
-        //         legal_moves.extend(self.get_moves(board.clone()));
-        //         legal_moves.extend(self.get_moves(board.clone()));
-        //         legal_moves.extend(self.get_moves(board.clone()));
-        //         legal_moves.extend(self.get_attacked_pieces_squares(board.clone()));
-        //     }
-        //     PieceTypes::Knight => {
-        //         legal_moves.extend(self.get_moves(board.clone()));
-        //         legal_moves.extend(self.get_attacked_pieces_squares(board.clone()));
-        //     }
-        //     PieceTypes::Bishop => {
-        //
-        //     }
-        //     PieceTypes::Rook => {
-        //
-        //     }
-        //     PieceTypes::Queen => {
-        //
-        //     }
-        //     PieceTypes::King => {
-        //
-        //     }
-        //     // _ => {panic!("Not implemented PieceType!")}
-        // }
-
 
         legal_moves
     }
@@ -158,14 +124,14 @@ impl Piece {
             PieceTypes::Pawn => {
                 legal_moves.extend(self.get_pawn_moves(
                     white_pieces.clone(),
-                    black_pieces.clone())
-                );
+                    black_pieces.clone()
+                ));
             }
             PieceTypes::Knight => {
                 legal_moves.extend(self.get_knight_moves(
                     white_pieces.clone(),
-                    black_pieces.clone())
-                )
+                    black_pieces.clone()
+                ));
             }
             PieceTypes::Bishop => {
 
@@ -232,14 +198,14 @@ impl Piece {
             PieceTypes::Pawn => {
                 legal_moves.extend(self.get_pawn_attacked_squares(
                     white_pieces.clone(),
-                    black_pieces.clone())
-                )
+                    black_pieces.clone()
+                ));
             }
             PieceTypes::Knight => {
                 legal_moves.extend(self.get_knight_moves(
                     white_pieces.clone(),
-                    black_pieces.clone())
-                )
+                    black_pieces.clone()
+                ));
             }
             PieceTypes::Bishop => {
 
