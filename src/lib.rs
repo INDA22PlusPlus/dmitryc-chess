@@ -1,7 +1,5 @@
-extern crate core;
-
-mod chess_engine;
-mod piece;
-mod coords;
-mod colors;
-mod piece_types;
+pub mod chess_engine;
+pub mod piece;
+pub mod coords;
+pub mod colors;
+pub mod piece_types;
