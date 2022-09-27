@@ -694,7 +694,7 @@ impl Piece {
             RelCoords::new(1, 1),
             RelCoords::new(1, 0),
             RelCoords::new(-1, 0),
-            RelCoords::new(-1, -1),
+            RelCoords::new(1, -1),
             RelCoords::new(0, -1),
             RelCoords::new(-1, -1),
         ];;
