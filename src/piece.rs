@@ -155,7 +155,10 @@ impl Piece {
                 ));
             }
             PieceTypes::King => {
-
+                legal_moves.extend(self.get_king_moves(
+                    white_pieces.clone(),
+                    black_pieces.clone()
+                ));
             }
             // _ => {panic!("Not implemented PieceType!")}
         }
@@ -235,7 +238,10 @@ impl Piece {
 
             }
             PieceTypes::King => {
-
+                legal_moves.extend(self.get_king_moves(
+                    white_pieces.clone(),
+                    black_pieces.clone()
+                ));
             }
             // _ => {panic!("Not implemented PieceType!")}
         }
@@ -290,7 +296,10 @@ impl Piece {
                 ));
             }
             PieceTypes::King => {
-
+                legal_moves.extend(self.get_king_attacked_pieces_squares(
+                    white_pieces.clone(),
+                    black_pieces.clone()
+                ));
             }
             // _ => {panic!("Not implemented PieceType!")}
         }
@@ -583,7 +592,7 @@ impl Piece {
         moves
     }
 
-    // Bishops Moves -------------------------------------------------
+    // Bishop Moves -------------------------------------------------
 
     fn get_bishop_moves(&self, white_pieces: Vec<Coords>, black_pieces: Vec<Coords>) -> Vec<Coords> {
         let cardinal_directions = vec![
@@ -644,6 +653,69 @@ impl Piece {
                     continue;
                 }
                 break;
+            }
+        }
+
+        moves
+    }
+
+    // King Moves -------------------------------------------------
+
+    fn get_king_moves(&self, white_pieces: Vec<Coords>, black_pieces: Vec<Coords>) -> Vec<Coords> {
+        let rel_moves = vec![
+            RelCoords::new(-1, 1),
+            RelCoords::new(0, 1),
+            RelCoords::new(1, 1),
+            RelCoords::new(1, 0),
+            RelCoords::new(-1, 0),
+            RelCoords::new(1, -1),
+            RelCoords::new(0, -1),
+            RelCoords::new(-1, -1),
+        ];;
+
+        let mut moves = vec![];
+        for rel_move in rel_moves.clone() {
+            // println!("{:?}", Coords::coords_and_rel_coords_result(self.coords, rel_move));
+            if Coords::check_within_coords(self.coords, rel_move){
+                let new_coords = Coords::coords_and_rel_coords_result(self.coords, rel_move);
+                if !white_pieces.contains(&new_coords) && !black_pieces.contains(&new_coords){
+                    moves.push(new_coords);
+                }
+            }
+        }
+
+        moves
+    }
+
+    fn get_king_attacked_pieces_squares(&self, white_pieces: Vec<Coords>, black_pieces: Vec<Coords>) -> Vec<Coords> {
+        let rel_moves = vec![
+            RelCoords::new(-1, 1),
+            RelCoords::new(0, 1),
+            RelCoords::new(1, 1),
+            RelCoords::new(1, 0),
+            RelCoords::new(-1, 0),
+            RelCoords::new(-1, -1),
+            RelCoords::new(0, -1),
+            RelCoords::new(-1, -1),
+        ];;
+        let opposite_color_pieces;
+        match self.color {
+            Colors::White => {
+                opposite_color_pieces = black_pieces.clone();
+            }
+            Colors::Black => {
+                opposite_color_pieces = white_pieces.clone();
+            }
+        }
+
+
+        let mut moves = vec![];
+        for rel_move in rel_moves.clone() {
+            if Coords::check_within_coords(self.coords, rel_move) {
+                let new_coords = Coords::coords_and_rel_coords_result(self.coords, rel_move);
+                if opposite_color_pieces.contains(&new_coords) {
+                    moves.push(new_coords);
+                }
             }
         }
 
