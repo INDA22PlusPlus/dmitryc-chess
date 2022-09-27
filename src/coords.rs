@@ -34,6 +34,16 @@ impl RelCoords {
     pub fn new(x:isize, y:isize) -> RelCoords{
         RelCoords{x, y}
     }
+
+    pub fn add_coords(&mut self, coords: Coords) {
+        self.x += coords.x as isize;
+        self.y += coords.y as isize;
+    }
+
+    pub fn add_rel_coords(&mut self, rel_coords: RelCoords) {
+        self.x += rel_coords.x;
+        self.y += rel_coords.y;
+    }
 }
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]

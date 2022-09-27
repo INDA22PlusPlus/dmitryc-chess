@@ -136,7 +136,10 @@ impl Piece {
 
             }
             PieceTypes::Rook => {
-
+                legal_moves.extend(self.get_rook_moves(
+                    white_pieces.clone(),
+                    black_pieces.clone()
+                ));
             }
             PieceTypes::Queen => {
 
@@ -476,6 +479,109 @@ impl Piece {
 
         moves
     }
+
+    // Rock Moves -------------------------------------------------
+
+    fn get_rook_moves(&self, white_pieces: Vec<Coords>, black_pieces: Vec<Coords>) -> Vec<Coords> {
+        let cardinal_directions = vec![
+            RelCoords::new(0, 1),
+            RelCoords::new(0, -1),
+            RelCoords::new(1, 0),
+            RelCoords::new(-1, 0),
+        ];
+
+        let mut moves = vec![];
+        for cardinal_direction in cardinal_directions.clone() {
+            let mut rel_move= RelCoords::new(0, 0);
+            loop {
+                rel_move.add_rel_coords(cardinal_direction.clone());
+                if Coords::check_within_coords(self.coords, rel_move) {
+                    let new_coords = Coords::coords_and_rel_coords_result(self.coords, rel_move);
+                    if !white_pieces.contains(&new_coords) && !black_pieces.contains(&new_coords){
+                        moves.push(new_coords);
+                        continue;
+                    }
+                }
+                break;
+            }
+        }
+
+        moves
+    }
+
+    // fn get_rook_special_moves(&self, white_pieces: Vec<Coords>, black_pieces: Vec<Coords>) -> Vec<Coords> {
+    //     let mut moves = vec![];
+    //
+    //     moves
+    // }
+    //
+    // fn get_rook_attacked_squares(&self, white_pieces: Vec<Coords>, black_pieces: Vec<Coords>) -> Vec<Coords> {
+    //     let rel_moves;
+    //     match self.color {
+    //         Colors::White => {
+    //             rel_moves = vec![
+    //                 RelCoords::new(-1, -1),
+    //                 RelCoords::new(1, -1),
+    //             ];
+    //         }
+    //         Colors::Black => {
+    //             rel_moves = vec![
+    //                 RelCoords::new(-1, 1),
+    //                 RelCoords::new(1, 1),
+    //             ];
+    //         }
+    //     }
+    //
+    //     let mut moves = vec![];
+    //     for rel_move in rel_moves.clone() {
+    //         // println!("{:?}", Coords::coords_and_rel_coords_result(self.coords, rel_move));
+    //         if Coords::check_within_coords(self.coords, rel_move){
+    //             let new_coords = Coords::coords_and_rel_coords_result(self.coords, rel_move);
+    //             if !white_pieces.contains(&new_coords) && !black_pieces.contains(&new_coords){
+    //                 moves.push(new_coords);
+    //             }
+    //         }
+    //     }
+    //
+    //     moves
+    // }
+    //
+    // fn get_rook_attacked_pieces_squares(&self, white_pieces: Vec<Coords>, black_pieces: Vec<Coords>) -> Vec<Coords> {
+    //     let oposite_color_pieces;
+    //     let rel_moves;
+    //     match self.color {
+    //         Colors::White => {
+    //             rel_moves = vec![
+    //                 RelCoords::new(-1, -1),
+    //                 RelCoords::new(1, -1),
+    //             ];
+    //             oposite_color_pieces = black_pieces.clone();
+    //         }
+    //         Colors::Black => {
+    //             rel_moves = vec![
+    //                 RelCoords::new(-1, 1),
+    //                 RelCoords::new(1, 1),
+    //             ];
+    //             oposite_color_pieces = white_pieces.clone();
+    //         }
+    //     }
+    //
+    //     let mut moves = vec![];
+    //
+    //     for rel_move in rel_moves.clone() {
+    //         // println!("{:?}", Coords::coords_and_rel_coords_result(self.coords, rel_move));
+    //         if Coords::check_within_coords(self.coords, rel_move){
+    //             let new_coords = Coords::coords_and_rel_coords_result(self.coords, rel_move);
+    //             if oposite_color_pieces.contains(&new_coords){
+    //                 moves.push(new_coords);
+    //             }
+    //         }
+    //     }
+    //
+    //     // println!("{:?}", moves);
+    //
+    //     moves
+    // }
 }
 
 #[cfg(test)]
