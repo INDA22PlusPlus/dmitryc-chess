@@ -2112,20 +2112,20 @@ mod tests {
         //     Colors::White,
         //     chess_engine.get_coords_from_notation(square))
         // ));
-        //
-        // let square = "h2";
-        // chess_engine.add_piece_with_notation(square, Some(Piece::new(
-        //     PieceTypes::Pawn,
-        //     Colors::Black,
-        //     chess_engine.get_coords_from_notation(square))
-        // ));
-        //
-        // let square = "d7";
-        // chess_engine.add_piece_with_notation(square, Some(Piece::new(
-        //     PieceTypes::Pawn,
-        //     Colors::Black,
-        //     chess_engine.get_coords_from_notation(square))
-        // ));
+
+        let square = "g2";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "d7";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
         //
         // let square = "a3";
         // chess_engine.add_piece_with_notation(square, Some(Piece::new(
@@ -2145,6 +2145,13 @@ mod tests {
         chess_engine.add_piece_with_notation(square, Some(Piece::new(
             PieceTypes::Rook,
             Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "g7";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Rook,
+            Colors::Black,
             chess_engine.get_coords_from_notation(square))
         ));
 
