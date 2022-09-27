@@ -619,20 +619,15 @@ impl ChessEngine {
 
         let piece = self.get_piece_option_with_coords(from_coords.x, from_coords.y);
 
-        let checked_color;
-        match self.turn {
-            Colors::White => {
-                checked_color = Colors::Black;
-            }
-            Colors::Black => {
-                checked_color = Colors::White;
-            }
-        }
-
-        if piece.is_some(){
-            if piece.unwrap().get_all_legal_moves(self.board.clone()).contains(&to_coords) {
-                if !Self::is_check(self.board.clone(), checked_color){
-                    self.force_play_with_coords(from_coords, to_coords);
+        if piece.as_ref().is_some() {
+            if self.turn == piece.clone().unwrap().color {
+                if piece.clone().unwrap().get_all_legal_moves(self.board.clone()).contains(&to_coords) {
+                    if !Self::is_check(self.board.clone(),
+                                       self.turn,
+                                       from_coords.clone(),
+                                       to_coords.clone()) {
+                        self.force_play_with_coords(from_coords, to_coords);
+                    }
                 }
             }
         }
@@ -642,22 +637,17 @@ impl ChessEngine {
     /// DEPENDENT of turn to any square.
     pub fn play_selected_piece_with_notation(&mut self, square: &str) {
         if self.selected_piece.is_some(){
-            let piece = self.selected_piece.as_ref().unwrap().clone();
-            let coords = self.get_coords_from_notation(square);
+            if self.turn == self.selected_piece.as_ref().unwrap().color{
+                let piece = self.selected_piece.as_ref().unwrap().clone();
+                let coords = self.get_coords_from_notation(square);
 
-            let checked_color;
-            match self.turn {
-                Colors::White => {
-                    checked_color = Colors::Black;
-                }
-                Colors::Black => {
-                    checked_color = Colors::White;
-                }
-            }
-
-            if piece.get_all_legal_moves(self.board.clone()).contains(&coords) {
-                if !Self::is_check(self.board.clone(), checked_color) {
-                    self.force_play_selected_piece_with_coords(coords.x, coords.y);
+                if piece.get_all_legal_moves(self.board.clone()).contains(&coords) {
+                    if !Self::is_check(self.board.clone(),
+                                       self.turn,
+                                       self.selected_piece.as_ref().unwrap().coords.clone(),
+                                       coords.clone()) {
+                        self.force_play_selected_piece_with_coords(coords.x, coords.y);
+                    }
                 }
             }
         }
@@ -668,8 +658,48 @@ impl ChessEngine {
         self.board.clone()
     }
 
-    pub fn is_check(board: Vec<Vec<Option<Piece>>>, checked_color: Colors) -> bool {
-        false
+    pub fn is_check(mut board: Vec<Vec<Option<Piece>>>, checked_color: Colors, from: Coords, to: Coords) -> bool {
+        board[to.y][to.x] = Some(Piece::new(
+            board[from.y][from.x].as_ref().unwrap().piece_type,
+            board[from.y][from.x].as_ref().unwrap().color,
+            to));
+
+        board[from.y][from.x] = None;
+
+        let mut king = None;
+        for row in board.clone() {
+            for square in row {
+                if square.as_ref().is_some() {
+                    if square.clone().unwrap().color == checked_color &&
+                        square.clone().unwrap().piece_type == PieceTypes::King {
+                        // println!("{:?}", square.clone().unwrap().coords);
+                        king = square;
+                    }
+                }
+            }
+        }
+
+        if king.is_none() {
+            // println!("No king!");
+            return false
+        }
+
+
+
+        let mut attacked_pieces = HashSet::new();
+
+        for row in board.clone() {
+            for square in row {
+                if square.is_some() {
+                    for piece_move in square.unwrap().get_attacked_pieces_squares(board.clone()){
+                        attacked_pieces.insert(piece_move);
+                    }
+                }
+            }
+        }
+
+
+        attacked_pieces.contains(&king.unwrap().coords)
     }
 }
 
@@ -2295,5 +2325,110 @@ mod tests {
         // //
         // chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
 
+    }
+
+    #[test]
+    fn test_is_check() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        let square = "g2";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Queen,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "g1";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::King,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "g7";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Queen,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "g8";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::King,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        assert!(ChessEngine::is_check(chess_engine.clone().board,
+                                      chess_engine.clone().turn,
+                                      chess_engine.clone().get_coords_from_notation("g7"),
+                                      chess_engine.clone().get_coords_from_notation("a7"))
+        );
+
+        assert!(!ChessEngine::is_check(chess_engine.clone().board,
+                                      chess_engine.clone().turn,
+                                      chess_engine.clone().get_coords_from_notation("g7"),
+                                      chess_engine.clone().get_coords_from_notation("g6"))
+        );
+    }
+
+    #[test]
+    fn test_play_when_checked() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        let square = "g2";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Queen,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "g1";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::King,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "g7";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Queen,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "g8";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::King,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        chess_engine.play_with_notation("g2", "a2");
+
+        // println!("{:?}", chess_engine.turn);
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        chess_engine.play_with_notation("g2", "g7");
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+
+        // assert!(ChessEngine::is_check(chess_engine.clone().board,
+        //                               chess_engine.clone().turn,
+        //                               chess_engine.clone().get_coords_from_notation("g7"),
+        //                               chess_engine.clone().get_coords_from_notation("a7"))
+        // );
+
+        // assert!(!ChessEngine::is_check(chess_engine.clone().board,
+        //                                chess_engine.clone().turn,
+        //                                chess_engine.clone().get_coords_from_notation("g7"),
+        //                                chess_engine.clone().get_coords_from_notation("g6"))
+        // );
     }
 }
