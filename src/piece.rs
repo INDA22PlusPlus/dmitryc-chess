@@ -103,7 +103,7 @@ impl Piece {
 
         legal_moves.extend(self.get_moves(board.clone()));
         legal_moves.extend(self.get_special_moves(board.clone()));
-        legal_moves.extend(self.get_attacked_squares(board.clone()));
+        // legal_moves.extend(self.get_attacked_squares(board.clone()));
         legal_moves.extend(self.get_attacked_pieces_squares(board.clone()));
 
         legal_moves

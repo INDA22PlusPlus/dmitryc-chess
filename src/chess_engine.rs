@@ -1869,7 +1869,58 @@ mod tests {
     }
 
     #[test]
-    fn quick_test_play_with_notation_pawn() {
+    fn quick_test_play_with_notation_pawn_special_moves() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        let square = "e2";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "h2";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "d7";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "a3";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "b4";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        chess_engine.play_with_notation("e2", "e4");
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        chess_engine.play_with_notation("d7", "d5");
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+    }
+
+    #[test]
+    fn quick_test_play_with_notation_pawn_take_black() {
         let mut chess_engine = ChessEngine::create_engine_with_empty_board();
 
         let square = "e2";
@@ -1900,11 +1951,103 @@ mod tests {
             chess_engine.get_coords_from_notation(square))
         ));
 
-        // chess_engine.play_with_notation("e3", "e4");
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
 
-        // assert_eq!(chess_engine.turn, Colors::White);
+        chess_engine.play_with_notation("a3", "b4");
 
         chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        // chess_engine.play_with_notation("d7", "d5");
+        //
+        // chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+    }
+
+    #[test]
+    fn quick_test_play_with_notation_pawn_take_white() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        let square = "e2";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "d7";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "a3";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "b4";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        chess_engine.play_with_notation("e2", "e3");
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        chess_engine.play_with_notation("b4", "a3");
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+    }
+
+    #[test]
+    fn quick_test_play_with_notation_pawn_go_wrong() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        let square = "e2";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "d7";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "a3";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "b4";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        chess_engine.play_with_notation("e2", "d3");
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        // chess_engine.play_with_notation("b4", "a3");
+        //
+        // chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
 
     }
 }
