@@ -3,7 +3,6 @@ use crate::colors::*;
 use crate::piece_types::*;
 use crate::coords::*;
 
-
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct Piece {
     pub piece_type: PieceTypes,

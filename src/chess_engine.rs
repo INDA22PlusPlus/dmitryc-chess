@@ -613,28 +613,52 @@ impl ChessEngine {
 
     /// Plays (following rules) by algebraic notation (chess notation) DEPENDENT of turn to any square.
     /// Moves variables named 'from' (&str) and 'to' (&str)
-    pub fn play_with_notation(&mut self, from: &str, to:&str){
+    pub fn play_with_notation(&mut self, from: &str, to:&str) {
         let from_coords = self.get_coords_from_notation(from);
         let to_coords = self.get_coords_from_notation(to);
 
         let piece = self.get_piece_option_with_coords(from_coords.x, from_coords.y);
 
+        let checked_color;
+        match self.turn {
+            Colors::White => {
+                checked_color = Colors::Black;
+            }
+            Colors::Black => {
+                checked_color = Colors::White;
+            }
+        }
+
         if piece.is_some(){
             if piece.unwrap().get_all_legal_moves(self.board.clone()).contains(&to_coords) {
-                self.force_play_with_coords(from_coords, to_coords);
+                if !Self::is_check(self.board.clone(), checked_color){
+                    self.force_play_with_coords(from_coords, to_coords);
+                }
             }
         }
     }
 
     /// Plays (following rules) selected piece algebraic notation (chess notation) coordinates
     /// DEPENDENT of turn to any square.
-    pub fn play_selected_piece_with_notation(&mut self, square: &str){
+    pub fn play_selected_piece_with_notation(&mut self, square: &str) {
         if self.selected_piece.is_some(){
             let piece = self.selected_piece.as_ref().unwrap().clone();
             let coords = self.get_coords_from_notation(square);
 
+            let checked_color;
+            match self.turn {
+                Colors::White => {
+                    checked_color = Colors::Black;
+                }
+                Colors::Black => {
+                    checked_color = Colors::White;
+                }
+            }
+
             if piece.get_all_legal_moves(self.board.clone()).contains(&coords) {
-                self.force_play_selected_piece_with_coords(coords.x, coords.y);
+                if !Self::is_check(self.board.clone(), checked_color) {
+                    self.force_play_selected_piece_with_coords(coords.x, coords.y);
+                }
             }
         }
     }
@@ -642,6 +666,10 @@ impl ChessEngine {
     /// Returns a CLONED board
     pub fn get_board(&self) -> Vec<Vec<Option<Piece>>>{
         self.board.clone()
+    }
+
+    pub fn is_check(board: Vec<Vec<Option<Piece>>>, checked_color: Colors) -> bool {
+        false
     }
 }
 
