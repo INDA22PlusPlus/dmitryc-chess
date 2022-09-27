@@ -2231,4 +2231,69 @@ mod tests {
         chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
 
     }
+
+    #[test]
+    fn quick_test_play_with_notation_queen() {
+        let mut chess_engine = ChessEngine::create_engine_with_empty_board();
+
+        // let square = "e2";
+        // chess_engine.add_piece_with_notation(square, Some(Piece::new(
+        //     PieceTypes::Pawn,
+        //     Colors::White,
+        //     chess_engine.get_coords_from_notation(square))
+        // ));
+
+        // let square = "g2";
+        // chess_engine.add_piece_with_notation(square, Some(Piece::new(
+        //     PieceTypes::Pawn,
+        //     Colors::White,
+        //     chess_engine.get_coords_from_notation(square))
+        // ));
+
+        let square = "e5";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+        //
+        // let square = "a3";
+        // chess_engine.add_piece_with_notation(square, Some(Piece::new(
+        //     PieceTypes::Pawn,
+        //     Colors::White,
+        //     chess_engine.get_coords_from_notation(square))
+        // ));
+        //
+        let square = "b5";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Pawn,
+            Colors::Black,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        let square = "e2";
+        chess_engine.add_piece_with_notation(square, Some(Piece::new(
+            PieceTypes::Queen,
+            Colors::White,
+            chess_engine.get_coords_from_notation(square))
+        ));
+
+        // let square = "g7";
+        // chess_engine.add_piece_with_notation(square, Some(Piece::new(
+        //     PieceTypes::Queen,
+        //     Colors::Black,
+        //     chess_engine.get_coords_from_notation(square))
+        // ));
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        chess_engine.play_with_notation("e2", "h5");
+
+        chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+        // chess_engine.play_with_notation("d7", "d6");
+        // //
+        // chess_engine.print_board_with_ranks_and_files_with_all_legal_moves_different_colors();
+
+    }
 }

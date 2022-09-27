@@ -145,7 +145,14 @@ impl Piece {
                 ));
             }
             PieceTypes::Queen => {
-
+                legal_moves.extend(self.get_rook_moves(
+                    white_pieces.clone(),
+                    black_pieces.clone()
+                ));
+                legal_moves.extend(self.get_bishop_moves(
+                    white_pieces.clone(),
+                    black_pieces.clone()
+                ));
             }
             PieceTypes::King => {
 
@@ -273,7 +280,14 @@ impl Piece {
                 ));
             }
             PieceTypes::Queen => {
-
+                legal_moves.extend(self.get_rook_attacked_pieces_squares(
+                    white_pieces.clone(),
+                    black_pieces.clone()
+                ));
+                legal_moves.extend(self.get_bishop_attacked_pieces_squares(
+                    white_pieces.clone(),
+                    black_pieces.clone()
+                ));
             }
             PieceTypes::King => {
 
