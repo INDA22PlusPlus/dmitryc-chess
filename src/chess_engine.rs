@@ -18,10 +18,10 @@ enum Status {
 #[derive(Debug, Clone, PartialEq)]
 pub struct ChessEngine{
     pub board: Vec<Vec<Option<Piece>>>,
-    size: Size,
-    selected_piece: Option<Piece>,
-    turn: Colors,
-    status: Status,
+    pub size: Size,
+    pub selected_piece: Option<Piece>,
+    pub turn: Colors,
+    pub status: Status,
 }
 
 impl ChessEngine {
