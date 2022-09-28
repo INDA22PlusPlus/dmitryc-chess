@@ -7,7 +7,7 @@ Cargo.toml:
 
     ...
     [dependencies]
-    chess = { git = "https://github.com/INDA22PlusPlus/dmitryc-chess" }
+    chess = { git = "https://github.com/INDA22PlusPlus/dmitryc-chess.git" }
 
 main.rs:
     
