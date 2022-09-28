@@ -790,6 +790,10 @@ impl ChessEngine {
             self.status = Normal;
         }
     }
+
+    pub fn get_selected(&self) -> Option<Piece> {
+        self.selected_piece.clone()
+    }
 }
 
 #[cfg(test)]
