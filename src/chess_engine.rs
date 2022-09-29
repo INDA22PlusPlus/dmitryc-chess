@@ -8,7 +8,7 @@ use colored::Colorize;
 use crate::chess_engine::Status::{Checked, Checkmated, Normal};
 
 #[derive(Debug, Clone, PartialEq)]
-enum Status {
+pub enum Status {
     Normal,
     Checked,
     Stalemated,
